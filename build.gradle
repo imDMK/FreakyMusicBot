@@ -1,0 +1,51 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
+    id 'java'
+}
+
+group 'me.dmk.app'
+version '1.0-SNAPSHOT'
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+repositories {
+    mavenCentral()
+
+    maven {url 'https://m2.dv8tion.net/releases'}
+    maven {url "https://storehouse.okaeri.eu/repository/maven-public/"}
+    maven {url "https://oss.sonatype.org/content/repositories/snapshots/"}
+}
+
+dependencies {
+    implementation 'org.javacord:javacord:3.8.0-SNAPSHOT'
+    implementation 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
+    implementation 'com.sedmelluq:lavaplayer:1.3.77'
+
+    implementation 'org.slf4j:slf4j-simple:2.0.7'
+
+    runtimeOnly 'org.apache.logging.log4j:log4j-to-slf4j:2.17.0'
+    runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "me.dmk.app.Main",
+                'Multi-Release': 'true'
+        )
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
