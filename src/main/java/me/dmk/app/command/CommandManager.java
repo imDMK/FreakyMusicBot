@@ -8,6 +8,7 @@ import org.javacord.api.DiscordApi;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,22 +31,27 @@ public class CommandManager {
         Command resumeCommand = new ResumeCommand(this.serverAudioPlayerMap);
         Command skipCommand = new SkipCommand(this.serverAudioPlayerMap);
         Command stopCommand = new StopCommand(this.serverAudioPlayerMap);
+        Command trackListCommand = new TrackListCommand(this.serverAudioPlayerMap);
 
-        this.registerCommand(
+        this.putCommand(
                 currentlyPlayingCommand,
                 leaveCommand,
                 joinCommand,
                 resumeCommand,
                 skipCommand,
-                stopCommand
+                stopCommand,
+                trackListCommand
         );
     }
 
-    public void registerCommand(Command... commands) {
+    public void putCommand(Command... commands) {
         for (Command command : commands) {
             this.commandMap.put(command.getName(), command);
-            command.createGlobal(this.discordApi);
         }
+
+        this.discordApi.bulkOverwriteGlobalApplicationCommands(
+                Set.of(commands)
+        );
     }
 
     public Optional<Command> get(String commandName) {

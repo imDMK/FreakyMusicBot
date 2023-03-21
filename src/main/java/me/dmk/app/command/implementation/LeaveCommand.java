@@ -42,6 +42,7 @@ public class LeaveCommand extends Command {
 
         voiceChannel.disconnect();
         server.getAudioConnection().ifPresent(AudioConnection::close);
+
         this.serverAudioPlayerMap.get(server.getId()).ifPresent(serverAudioPlayer -> {
             serverAudioPlayer.getAudioPlayer().destroy();
             this.serverAudioPlayerMap.remove(server.getId());
