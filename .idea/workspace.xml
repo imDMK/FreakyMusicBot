@@ -4,33 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6297f2ac-1ce7-4bb9-a22a-69cc935fd864" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/MusicApp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/audio/LavaplayerAudioSource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/audio/TrackScheduler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/audio/server/ServerAudioPlayer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/audio/server/ServerAudioPlayerMap.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/command/Command.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/command/CommandManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/command/implementation/PlayCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/configuration/ClientConfiguration.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/embed/EmbedMessage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/listener/SlashCommandListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/me/dmk/app/util/StringUtil.java" afterDir="false" />
-    </list>
+    <list default="true" id="6297f2ac-1ce7-4bb9-a22a-69cc935fd864" name="Changes" comment="Initial commit." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,7 +89,7 @@
       <command value="gradle :shadowJar" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Gradle.FreakyMusicBot [build]">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="me.dmk.app.Main" />
       <module name="FreakyMusicBot.main" />
@@ -226,5 +200,9 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.bat" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit." />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial commit." />
   </component>
 </project>
