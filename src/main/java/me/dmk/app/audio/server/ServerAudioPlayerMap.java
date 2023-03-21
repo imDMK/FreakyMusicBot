@@ -36,4 +36,8 @@ public class ServerAudioPlayerMap {
                 () -> this.create(serverId)
         );
     }
+
+    public void remove(long serverId) {
+        this.serverAudioPlayerMap.remove(serverId);
+    }
 }

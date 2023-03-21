@@ -12,4 +12,11 @@ public class StringUtil {
     public boolean isUrl(String string) {
         return string.startsWith("http://") || string.startsWith("https://");
     }
+
+    public String getImageFromYouTubeVideo(String videoIdentifier) {
+        return String.format(
+                "https://img.youtube.com/vi/%s/sddefault.jpg",
+                videoIdentifier
+        );
+    }
 }

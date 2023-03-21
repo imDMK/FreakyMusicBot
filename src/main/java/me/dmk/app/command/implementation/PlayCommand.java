@@ -36,7 +36,7 @@ public class PlayCommand extends Command {
     private final ServerAudioPlayerMap serverAudioPlayerMap;
 
     public PlayCommand(AudioPlayerManager audioPlayerManager, ServerAudioPlayerMap serverAudioPlayerMap) {
-        super("play", "Dołącz do kanału głosowego");
+        super("play", "Puść ulubiony utwór");
 
         this.audioPlayerManager = audioPlayerManager;
         this.serverAudioPlayerMap = serverAudioPlayerMap;
@@ -125,7 +125,10 @@ public class PlayCommand extends Command {
                 trackScheduler.queue(track);
 
                 EmbedBuilder embedBuilder = new EmbedMessage(server).success()
-                        .setDescription("Zakolejkowano utwór **" + track.getInfo().title + "**");
+                        .setDescription("Zakolejkowano utwór:\n **" + track.getInfo().title + "**")
+                        .setImage(
+                                StringUtil.getImageFromYouTubeVideo(track.getIdentifier())
+                        );
 
                 responseUpdater.addEmbed(embedBuilder).update();
             }
@@ -138,15 +141,18 @@ public class PlayCommand extends Command {
                 if (playlist.isSearchResult()) {
                     trackScheduler.queue(firstTrack);
 
-                    embedDescrption = "Zakolejkowano utwór **" + firstTrack.getInfo().title + "**";
+                    embedDescrption = "Zakolejkowano utwór:\n **" + firstTrack.getInfo().title + "**";
                 } else {
                     playlist.getTracks().forEach(trackScheduler::queue);
 
-                    embedDescrption = "Zakolejkowano wszystkie utwory z playlisty **" + playlist.getName() + "**";
+                    embedDescrption = "Zakolejkowano wszystkie utwory z playlisty:\n **" + playlist.getName() + "**";
                 }
 
                 EmbedBuilder embedBuilder = new EmbedMessage(server).success()
-                        .setDescription(embedDescrption);
+                        .setDescription(embedDescrption)
+                        .setImage(
+                                StringUtil.getImageFromYouTubeVideo(firstTrack.getIdentifier())
+                        );
 
                 responseUpdater.addEmbed(embedBuilder).update();
             }

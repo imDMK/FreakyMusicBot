@@ -3,7 +3,7 @@ package me.dmk.app.command;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import lombok.RequiredArgsConstructor;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
-import me.dmk.app.command.implementation.PlayCommand;
+import me.dmk.app.command.implementation.*;
 import org.javacord.api.DiscordApi;
 
 import java.util.Map;
@@ -24,9 +24,21 @@ public class CommandManager {
     private final Map<String, Command> commandMap = new ConcurrentHashMap<>();
 
     public void registerCommands() {
+        Command currentlyPlayingCommand = new CurrentlyPlayingCommand(this.serverAudioPlayerMap);
+        Command leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
         Command joinCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
+        Command resumeCommand = new ResumeCommand(this.serverAudioPlayerMap);
+        Command skipCommand = new SkipCommand(this.serverAudioPlayerMap);
+        Command stopCommand = new StopCommand(this.serverAudioPlayerMap);
 
-        this.registerCommand(joinCommand);
+        this.registerCommand(
+                currentlyPlayingCommand,
+                leaveCommand,
+                joinCommand,
+                resumeCommand,
+                skipCommand,
+                stopCommand
+        );
     }
 
     public void registerCommand(Command... commands) {
