@@ -1,5 +1,6 @@
 package me.dmk.app.command.implementation.player;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
@@ -45,15 +46,26 @@ public class SkipCommand extends PlayerCommand {
             return;
         }
 
+        AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+
+        if (playingTrack == null) {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
+            embedMessage.setDescription("Aktualnie nie gram.");
+
+            embedMessage.createImmediateResponder(interaction);
+            return;
+        }
+
         //Skip track
         serverAudioPlayer.getTrackScheduler().nextTrack();
 
-        AudioTrack nextTrack = serverAudioPlayer.getAudioPlayer().getPlayingTrack();
+        AudioTrack nextTrack = audioPlayer.getPlayingTrack();
         String nextTrackTitle = (nextTrack == null ? "Brak" : nextTrack.getInfo().title);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-        embedMessage.setDescription("Pominięto aktualny utwór.\nNastępny utwór: **" + nextTrackTitle + "**");
+        embedMessage.setDescription("Pominięto utwór:\n**" + playingTrack.getInfo().title + "**\nNastępny utwór:\n**" + nextTrackTitle + "**");
         embedMessage.setYouTubeVideoImage(nextTrack);
 
         embedMessage.createImmediateResponder(interaction);

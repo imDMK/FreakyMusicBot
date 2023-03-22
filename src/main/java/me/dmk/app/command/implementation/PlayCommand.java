@@ -124,13 +124,12 @@ public class PlayCommand extends Command {
             public void trackLoaded(AudioTrack track) {
                 trackScheduler.queue(track);
 
-                EmbedBuilder embedBuilder = new EmbedMessage(server).success()
-                        .setDescription("Zakolejkowano utwór:\n **" + track.getInfo().title + "**")
-                        .setImage(
-                                StringUtil.getImageFromYouTubeVideo(track.getIdentifier())
-                        );
+                EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                responseUpdater.addEmbed(embedBuilder).update();
+                embedMessage.setDescription("Zakolejkowano utwór:\n **" + track.getInfo().title + "**");
+                embedMessage.setYouTubeVideoImage(track);
+
+                responseUpdater.addEmbed(embedMessage).update();
             }
 
             @Override
@@ -148,13 +147,12 @@ public class PlayCommand extends Command {
                     embedDescrption = "Zakolejkowano wszystkie utwory z playlisty:\n **" + playlist.getName() + "**";
                 }
 
-                EmbedBuilder embedBuilder = new EmbedMessage(server).success()
-                        .setDescription(embedDescrption)
-                        .setImage(
-                                StringUtil.getImageFromYouTubeVideo(firstTrack.getIdentifier())
-                        );
+                EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                responseUpdater.addEmbed(embedBuilder).update();
+                embedMessage.setDescription(embedDescrption);
+                embedMessage.setYouTubeVideoImage(firstTrack);
+
+                responseUpdater.addEmbed(embedMessage).update();
             }
 
             @Override

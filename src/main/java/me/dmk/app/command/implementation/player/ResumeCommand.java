@@ -47,14 +47,20 @@ public class ResumeCommand extends PlayerCommand {
         }
 
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+
+        if (playingTrack == null) {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
+            embedMessage.setDescription("Aktualnie nie gram.");
+
+            embedMessage.createImmediateResponder(interaction);
+            return;
+        }
+
         audioPlayer.setPaused(false);
 
-        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
-        String playingTrackTitle = (playingTrack == null ? "Brak" : playingTrack.getInfo().title);
-
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-
-        embedMessage.setDescription("Wznowiono odtwarzanie utworu:\n**" + playingTrackTitle + "**");
+        embedMessage.setDescription("Wznowiono odtwarzanie utworu:\n**" + playingTrack.getInfo().title + "**");
 
         embedMessage.createImmediateResponder(interaction);
     }

@@ -1,5 +1,7 @@
 package me.dmk.app.command.implementation.player;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
@@ -24,7 +26,7 @@ public class StopCommand extends PlayerCommand {
         Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
         if (audioConnectionOptional.isEmpty()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
-            embedMessage.setDescription("Bot aktualnie nie gra na tym serwerze.");
+            embedMessage.setDescription("Aktualnie nie gram.");
 
             embedMessage.createImmediateResponder(interaction);
             return;
@@ -44,10 +46,21 @@ public class StopCommand extends PlayerCommand {
             return;
         }
 
-        serverAudioPlayer.getAudioPlayer().setPaused(true);
+        AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+
+        if (playingTrack == null) {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
+            embedMessage.setDescription("Aktualnie nie gram.");
+
+            embedMessage.createImmediateResponder(interaction);
+            return;
+        }
+
+        audioPlayer.setPaused(true);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Zatrzymano utwór.");
+        embedMessage.setDescription("Zatrzymano utwór:\n**" + playingTrack.getInfo().title + "**");
 
         embedMessage.createImmediateResponder(interaction);
     }
