@@ -8,7 +8,7 @@ import eu.okaeri.configs.json.simple.JsonSimpleConfigurer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
-import me.dmk.app.command.CommandManager;
+import me.dmk.app.command.manager.CommandManager;
 import me.dmk.app.configuration.ClientConfiguration;
 import me.dmk.app.listener.SlashCommandListener;
 import org.javacord.api.DiscordApi;
@@ -63,7 +63,7 @@ public class MusicApp {
         commandManager.registerCommands();
 
         Stream.of(
-                new SlashCommandListener(commandManager)
+                new SlashCommandListener(commandManager, this.serverAudioPlayerMap)
         ).forEach(discordApi::addListener);
 
         log.info("Shard " + currentShard + " ready.");

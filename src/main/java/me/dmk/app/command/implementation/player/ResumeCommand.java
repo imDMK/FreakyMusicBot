@@ -1,10 +1,9 @@
-package me.dmk.app.command.implementation;
+package me.dmk.app.command.implementation.player;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
-import me.dmk.app.audio.server.ServerAudioPlayerMap;
-import me.dmk.app.command.Command;
+import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.entity.server.Server;
@@ -17,18 +16,13 @@ import java.util.Optional;
  * Created by DMK on 21.03.2023
  */
 
-public class SkipCommand extends Command {
-
-    private final ServerAudioPlayerMap serverAudioPlayerMap;
-
-    public SkipCommand(ServerAudioPlayerMap serverAudioPlayerMap) {
-        super("skip", "Pomiń aktualny grany utwór");
-
-        this.serverAudioPlayerMap = serverAudioPlayerMap;
+public class ResumeCommand extends PlayerCommand {
+    public ResumeCommand() {
+        super("resume", "Wznów zatrzymany utwór");
     }
 
     @Override
-    public void execute(SlashCommandInteraction interaction, Server server, User user) {
+    public void execute(SlashCommandInteraction interaction, Server server, User user, ServerAudioPlayer serverAudioPlayer) {
         Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
         if (audioConnectionOptional.isEmpty()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
@@ -52,15 +46,15 @@ public class SkipCommand extends Command {
             return;
         }
 
-        ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.get(server.getId()).orElseThrow();
-        TrackScheduler trackScheduler = serverAudioPlayer.getTrackScheduler();
+        AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+        audioPlayer.setPaused(false);
 
-        trackScheduler.nextTrack();
-
-        AudioTrack playingTrack = serverAudioPlayer.getAudioPlayer().getPlayingTrack();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+        String playingTrackTitle = (playingTrack == null ? "Brak" : playingTrack.getInfo().title);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Pominięto aktualny utwór.\nNastępny utwór: **" + (playingTrack == null ? "Brak następnego utworu" : playingTrack.getInfo().title) + "**");
+
+        embedMessage.setDescription("Wznowiono odtwarzanie utworu:\n**" + playingTrackTitle + "**");
 
         embedMessage.createImmediateResponder(interaction);
     }

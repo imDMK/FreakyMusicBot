@@ -1,5 +1,7 @@
 package me.dmk.app.embed;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.emoji.KnownCustomEmoji;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -16,9 +18,7 @@ public class EmbedMessage extends EmbedBuilder {
 
     private final Server server;
 
-    private final Color defaultColor = new Color(255, 255, 255);
     private final Color successColor = new Color(50, 255, 0);
-    private final Color warningColor = new Color(255, 150, 0);
     private final Color errorColor = new Color(255, 0, 0);
 
     public EmbedMessage(Server server) {
@@ -32,25 +32,11 @@ public class EmbedMessage extends EmbedBuilder {
                 );
     }
 
-    public EmbedMessage defaultEmbed() {
-        this.setColor(this.defaultColor);
-        return this;
-    }
-
     public EmbedMessage success() {
         Optional<KnownCustomEmoji> successEmoji = this.server.getCustomEmojisByNameIgnoreCase("success").stream().findFirst();
 
         this.setTitle((successEmoji.map(KnownCustomEmoji::getMentionTag).orElse("✅")) + " Wykonano!");
         this.setColor(this.successColor);
-
-        return this;
-    }
-
-    public EmbedMessage warning() {
-        Optional<KnownCustomEmoji> successEmoji = this.server.getCustomEmojisByNameIgnoreCase("warning").stream().findFirst();
-
-        this.setTitle((successEmoji.map(KnownCustomEmoji::getMentionTag).orElse("⚠")) + " Ostrzeżenie!");
-        this.setColor(this.warningColor);
 
         return this;
     }
@@ -62,6 +48,14 @@ public class EmbedMessage extends EmbedBuilder {
         this.setColor(this.errorColor);
 
         return this;
+    }
+
+    public void setYouTubeVideoImage(AudioTrack audioTrack) {
+        if (audioTrack != null) {
+            this.setImage(
+                    StringUtil.getImageFromYouTubeVideo(audioTrack.getIdentifier())
+            );
+        }
     }
     
     public void createImmediateResponder(SlashCommandInteraction slashCommandInteraction) {

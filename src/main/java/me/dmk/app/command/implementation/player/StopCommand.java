@@ -1,8 +1,7 @@
-package me.dmk.app.command.implementation;
+package me.dmk.app.command.implementation.player;
 
 import me.dmk.app.audio.server.ServerAudioPlayer;
-import me.dmk.app.audio.server.ServerAudioPlayerMap;
-import me.dmk.app.command.Command;
+import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.entity.server.Server;
@@ -15,18 +14,13 @@ import java.util.Optional;
  * Created by DMK on 21.03.2023
  */
 
-public class StopCommand extends Command {
-
-    private final ServerAudioPlayerMap serverAudioPlayerMap;
-
-    public StopCommand(ServerAudioPlayerMap serverAudioPlayerMap) {
+public class StopCommand extends PlayerCommand {
+    public StopCommand() {
         super("stop", "Zatrzymaj aktualnie grający utwór");
-
-        this.serverAudioPlayerMap = serverAudioPlayerMap;
     }
 
     @Override
-    public void execute(SlashCommandInteraction interaction, Server server, User user) {
+    public void execute(SlashCommandInteraction interaction, Server server, User user, ServerAudioPlayer serverAudioPlayer) {
         Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
         if (audioConnectionOptional.isEmpty()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
@@ -50,9 +44,7 @@ public class StopCommand extends Command {
             return;
         }
 
-        this.serverAudioPlayerMap.get(server.getId())
-                .map(ServerAudioPlayer::getAudioPlayer)
-                .ifPresent(audioPlayer -> audioPlayer.setPaused(true));
+        serverAudioPlayer.getAudioPlayer().setPaused(true);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
         embedMessage.setDescription("Zatrzymano utwór.");
