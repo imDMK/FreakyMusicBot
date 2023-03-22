@@ -20,12 +20,14 @@ repositories {
     maven {url 'https://m2.dv8tion.net/releases'}
     maven {url "https://storehouse.okaeri.eu/repository/maven-public/"}
     maven {url "https://oss.sonatype.org/content/repositories/snapshots/"}
+    maven {url 'https://jitpack.io'}
 }
 
 dependencies {
     implementation 'org.javacord:javacord:3.8.0-SNAPSHOT'
     implementation 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
     implementation 'com.sedmelluq:lavaplayer:1.3.77'
+    implementation 'com.github.jagrosh:JLyrics:master-SNAPSHOT'
 
     implementation 'org.slf4j:slf4j-simple:2.0.7'
 

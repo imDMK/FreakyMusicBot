@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.command.PlayerCommand;
+import me.dmk.app.command.implementation.LyricsCommand;
 import me.dmk.app.command.implementation.PlayCommand;
 import me.dmk.app.command.implementation.player.*;
 import org.javacord.api.DiscordApi;
@@ -38,6 +39,7 @@ public class CommandManager {
         PlayerCommand trackListCommand = new TrackListCommand();
         PlayerCommand volumeCommand = new VolumeCommand();
 
+        Command lyricsCommand = new LyricsCommand();
         Command playCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
 
         this.register(
@@ -49,6 +51,8 @@ public class CommandManager {
                 stopCommand,
                 trackListCommand,
                 volumeCommand,
+
+                lyricsCommand,
                 playCommand
         );
     }
