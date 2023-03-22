@@ -26,7 +26,7 @@ public class ResumeCommand extends PlayerCommand {
         Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
         if (audioConnectionOptional.isEmpty()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
-            embedMessage.setDescription("Bot aktualnie nie gra na tym serwerze.");
+            embedMessage.setDescription("Aktualnie nie gram.");
 
             embedMessage.createImmediateResponder(interaction);
             return;

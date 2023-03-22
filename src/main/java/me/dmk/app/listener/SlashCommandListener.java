@@ -51,7 +51,7 @@ public class SlashCommandListener implements SlashCommandCreateListener {
                             playerCommand.execute(interaction, server, user, serverAudioPlayer),
                     () -> {
                 EmbedMessage embedMessage = new EmbedMessage(server).error();
-                embedMessage.setDescription("Aktualnie nie gram na tym serwerze.");
+                embedMessage.setDescription("Aktualnie nie gram.");
 
                 embedMessage.createImmediateResponder(interaction);
             });

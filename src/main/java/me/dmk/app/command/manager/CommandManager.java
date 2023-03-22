@@ -36,6 +36,7 @@ public class CommandManager {
         PlayerCommand skipCommand = new SkipCommand();
         PlayerCommand stopCommand = new StopCommand();
         PlayerCommand trackListCommand = new TrackListCommand();
+        PlayerCommand volumeCommand = new VolumeCommand();
 
         Command playCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
 
@@ -47,6 +48,7 @@ public class CommandManager {
                 skipCommand,
                 stopCommand,
                 trackListCommand,
+                volumeCommand,
                 playCommand
         );
     }
