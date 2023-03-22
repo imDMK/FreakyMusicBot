@@ -57,6 +57,14 @@ public class ResumeCommand extends PlayerCommand {
             return;
         }
 
+        if (!audioPlayer.isPaused()) {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
+            embedMessage.setDescription("Utwór nie jest zatrzymany.");
+
+            embedMessage.createImmediateResponder(interaction);
+            return;
+        }
+
         audioPlayer.setPaused(false);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
