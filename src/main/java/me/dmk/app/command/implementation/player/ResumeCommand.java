@@ -68,7 +68,10 @@ public class ResumeCommand extends PlayerCommand {
         audioPlayer.setPaused(false);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Wznowiono odtwarzanie utworu:\n**" + playingTrack.getInfo().title + "**");
+        embedMessage.setDescription(
+                "Wznowiono odtwarzanie utworu:\n**"
+                + playingTrack.getInfo().title + "**"
+        );
 
         embedMessage.createImmediateResponder(interaction);
     }

@@ -126,7 +126,11 @@ public class PlayCommand extends Command {
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                embedMessage.setDescription("Zakolejkowano utwór:\n **" + track.getInfo().title + "**");
+                embedMessage.setDescription(
+                        "Zakolejkowano utwór:" +
+                        "\n**" + track.getInfo().title + "**\n" +
+                        "**Długość:** " + StringUtil.millisToString(track.getDuration())
+                );
                 embedMessage.setYouTubeVideoImage(track);
 
                 responseUpdater.addEmbed(embedMessage).update();
@@ -135,16 +139,21 @@ public class PlayCommand extends Command {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getTracks().get(0);
-                String embedDescrption;
 
+                String embedDescrption;
                 if (playlist.isSearchResult()) {
                     trackScheduler.queue(firstTrack);
 
-                    embedDescrption = "Zakolejkowano utwór:\n **" + firstTrack.getInfo().title + "**";
+                    embedDescrption =
+                            "Zakolejkowano utwór:\n" +
+                            "**" + firstTrack.getInfo().title + "**\n" +
+                            "**Długość:** " + StringUtil.millisToString(firstTrack.getDuration());
                 } else {
                     playlist.getTracks().forEach(trackScheduler::queue);
 
-                    embedDescrption = "Zakolejkowano wszystkie utwory z playlisty:\n **" + playlist.getName() + "**";
+                    embedDescrption =
+                            "Zakolejkowano wszystkie utwory z playlisty:\n" +
+                            "**" + playlist.getName() + "**";
                 }
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();

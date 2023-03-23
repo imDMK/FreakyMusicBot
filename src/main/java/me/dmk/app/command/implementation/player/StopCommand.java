@@ -68,7 +68,10 @@ public class StopCommand extends PlayerCommand {
         audioPlayer.setPaused(true);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Zatrzymano utwór:\n**" + playingTrack.getInfo().title + "**");
+        embedMessage.setDescription(
+                "Zatrzymano utwór:\n**"
+                + playingTrack.getInfo().title + "**"
+        );
 
         embedMessage.createImmediateResponder(interaction);
     }

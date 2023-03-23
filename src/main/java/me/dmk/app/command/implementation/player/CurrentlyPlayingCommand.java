@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -23,11 +24,24 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 
-        String playingTrackTitle = (playingTrack == null ? "Brak" : playingTrack.getInfo().title);
+        String embedDescription;
+        if (playingTrack == null) {
+            embedDescription = "**Brak**";
+        } else {
+            long trackDuration = playingTrack.getDuration();
+            long trackPosition = playingTrack.getPosition();
+
+            long remainingTrackTime = trackDuration - trackPosition;
+
+            embedDescription =
+                    "**" + playingTrack.getInfo().title + "**\n" +
+                    "**Długość:** " + StringUtil.millisToString(trackDuration) + "**\n" +
+                    "**Pozostały czas:** " + StringUtil.millisToString(remainingTrackTime);
+        }
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-        embedMessage.setDescription("Aktualnie grany utwór:\n**" + playingTrackTitle + "**");
+        embedMessage.setDescription(embedDescription);
         embedMessage.setYouTubeVideoImage(playingTrack);
 
         embedMessage.createImmediateResponder(interaction);

@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.StringUtil;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -61,11 +62,19 @@ public class SkipCommand extends PlayerCommand {
         serverAudioPlayer.getTrackScheduler().nextTrack();
 
         AudioTrack nextTrack = audioPlayer.getPlayingTrack();
-        String nextTrackTitle = (nextTrack == null ? "Brak" : nextTrack.getInfo().title);
+
+        String embedDescrption;
+        if (nextTrack == null) {
+            embedDescrption = "**Brak**";
+        } else {
+            embedDescrption =
+                    "**" + nextTrack.getInfo().title + "**\n" +
+                    "**Długość:**" + StringUtil.millisToString(nextTrack.getDuration());
+        }
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-        embedMessage.setDescription("Pominięto utwór:\n**" + playingTrack.getInfo().title + "**\nNastępny utwór:\n**" + nextTrackTitle + "**");
+        embedMessage.setDescription(embedDescrption);
         embedMessage.setYouTubeVideoImage(nextTrack);
 
         embedMessage.createImmediateResponder(interaction);
