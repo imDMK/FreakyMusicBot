@@ -127,8 +127,8 @@ public class PlayCommand extends Command {
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
                 embedMessage.setDescription(
-                        "Zakolejkowano utwór:" +
-                        "\n**" + track.getInfo().title + "**\n" +
+                        "Zakolejkowano utwór:\n" +
+                        "**" + track.getInfo().title + "**\n" +
                         "**Długość:** " + StringUtil.millisToString(track.getDuration())
                 );
                 embedMessage.setYouTubeVideoImage(track);

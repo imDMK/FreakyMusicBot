@@ -24,24 +24,27 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 
-        String embedDescription;
         if (playingTrack == null) {
-            embedDescription = "**Brak**";
-        } else {
-            long trackDuration = playingTrack.getDuration();
-            long trackPosition = playingTrack.getPosition();
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-            long remainingTrackTime = trackDuration - trackPosition;
-
-            embedDescription =
-                    "**" + playingTrack.getInfo().title + "**\n" +
-                    "**Długość:** " + StringUtil.millisToString(trackDuration) + "**\n" +
-                    "**Pozostały czas:** " + StringUtil.millisToString(remainingTrackTime);
+            embedMessage.setDescription("Aktualnie nie gram.");
+            embedMessage.createImmediateResponder(interaction);
+            return;
         }
+
+        long trackDuration = playingTrack.getDuration();
+        long trackPosition = playingTrack.getPosition();
+
+        long remainingTrackTime = trackDuration - trackPosition;
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-        embedMessage.setDescription(embedDescription);
+        embedMessage.setDescription(
+                "Aktualnie gram:\n" +
+                "**" + playingTrack.getInfo().title + "**\n" +
+                "**Długość:** " + StringUtil.millisToString(trackDuration) + "\n" +
+                "**Pozostały czas:** " + StringUtil.millisToString(remainingTrackTime)
+        );
         embedMessage.setYouTubeVideoImage(playingTrack);
 
         embedMessage.createImmediateResponder(interaction);
