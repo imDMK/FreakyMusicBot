@@ -49,17 +49,17 @@ public class StopCommand extends PlayerCommand {
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 
-        if (playingTrack == null) {
+        if (audioPlayer.isPaused()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
-            embedMessage.setDescription("Aktualnie nie gram.");
+            embedMessage.setDescription("Utwór jest już zatrzymany.");
 
             embedMessage.createImmediateResponder(interaction);
             return;
         }
 
-        if (audioPlayer.isPaused()) {
+        if (playingTrack == null) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
-            embedMessage.setDescription("Utwór jest już zatrzymany.");
+            embedMessage.setDescription("Aktualnie nie gram.");
 
             embedMessage.createImmediateResponder(interaction);
             return;

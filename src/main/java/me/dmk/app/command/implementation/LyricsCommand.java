@@ -45,7 +45,7 @@ public class LyricsCommand extends Command {
 
                     embedMessage.createImmediateResponder(interaction);
                 })
-                .exceptionally(throwable -> {
+                .exceptionallyAsync(throwable -> {
                     EmbedMessage embedMessage = new EmbedMessage(server).error();
                     embedMessage.setDescription("Nie udało się znaleźć tekstu.");
 

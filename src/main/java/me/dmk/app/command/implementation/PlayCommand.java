@@ -105,7 +105,7 @@ public class PlayCommand extends Command {
 
                         this.queue(responseUpdater, server, query, serverAudioPlayer);
                     })
-                    .exceptionally(throwable -> {
+                    .exceptionallyAsync(throwable -> {
                         EmbedBuilder embedBuilder = new EmbedMessage(server).error()
                                 .setDescription("Wystąpił błąd podczas dołączania do twojego kanału głosowego.")
                                 .addField("Szczegóły błędu", throwable.getMessage());
