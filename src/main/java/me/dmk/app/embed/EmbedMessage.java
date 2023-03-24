@@ -3,9 +3,12 @@ package me.dmk.app.embed;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.emoji.KnownCustomEmoji;
+import org.javacord.api.entity.message.MessageFlag;
+import org.javacord.api.entity.message.component.HighLevelComponent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
-import org.javacord.api.interaction.SlashCommandInteraction;
+import org.javacord.api.interaction.InteractionBase;
+import org.javacord.api.interaction.callback.InteractionImmediateResponseBuilder;
 
 import java.awt.*;
 import java.util.Optional;
@@ -64,7 +67,29 @@ public class EmbedMessage extends EmbedBuilder {
         }
     }
     
-    public void createImmediateResponder(SlashCommandInteraction slashCommandInteraction) {
-        slashCommandInteraction.createImmediateResponder().addEmbed(this).respond();
+    public void createImmediateResponder(InteractionBase interactionBase) {
+        interactionBase.createImmediateResponder()
+                .addEmbed(this)
+                .respond();
+    }
+
+    public void createImmediateResponder(InteractionBase interactionBase, HighLevelComponent... highLevelComponents) {
+        interactionBase.createImmediateResponder()
+                .addEmbed(this)
+                .addComponents(highLevelComponents)
+                .respond();
+    }
+
+    public void createImmediateResponder(InteractionBase interactionBase, boolean ephermal, HighLevelComponent... highLevelComponents) {
+        InteractionImmediateResponseBuilder responseBuilder = interactionBase.createImmediateResponder();
+
+        responseBuilder.addEmbed(this);
+        responseBuilder.addComponents(highLevelComponents);
+
+        if (ephermal) {
+            responseBuilder.setFlags(MessageFlag.EPHEMERAL);
+        }
+
+        responseBuilder.respond();
     }
 }

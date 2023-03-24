@@ -3,6 +3,7 @@ package me.dmk.app.command.implementation;
 import com.jagrosh.jlyrics.LyricsClient;
 import me.dmk.app.command.Command;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.EmojiUtil;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -39,7 +40,7 @@ public class LyricsCommand extends Command {
 
                     String author = lyrics.getAuthor().replace("Lyrics", "");
 
-                    embedMessage.setTitle("\uD83C\uDFB5 " + author + " - " + lyrics.getTitle()); //🎵
+                    embedMessage.setTitle(EmojiUtil.getMusialNote() + " " + author + " - " + lyrics.getTitle());
                     embedMessage.setUrl(lyrics.getURL());
                     embedMessage.setDescription(lyrics.getContent());
 

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.manager.CommandManager;
 import me.dmk.app.configuration.ClientConfiguration;
+import me.dmk.app.listener.ButtonInteractionListener;
 import me.dmk.app.listener.SlashCommandListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -71,6 +72,7 @@ public class MusicApp {
         commandManager.registerCommands();
 
         Stream.of(
+                new ButtonInteractionListener(this.serverAudioPlayerMap),
                 new SlashCommandListener(commandManager, this.serverAudioPlayerMap)
         ).forEach(discordApi::addListener);
 

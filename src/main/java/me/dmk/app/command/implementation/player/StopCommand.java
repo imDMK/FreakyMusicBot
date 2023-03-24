@@ -32,20 +32,6 @@ public class StopCommand extends PlayerCommand {
             return;
         }
 
-        AudioConnection audioConnection = audioConnectionOptional.get();
-
-        boolean isOnChannelWithBot =
-                user.getConnectedVoiceChannel(server).isPresent() &&
-                        user.getConnectedVoiceChannel(server).get().getId() == audioConnection.getChannel().getId();
-
-        if (!isOnChannelWithBot) {
-            EmbedMessage embedMessage = new EmbedMessage(server).error();
-            embedMessage.setDescription("Aktualnie nie gram lub nie jesteś ze mną na kanale.");
-
-            embedMessage.createImmediateResponder(interaction);
-            return;
-        }
-
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 

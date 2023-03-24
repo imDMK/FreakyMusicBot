@@ -5,7 +5,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.EmojiUtil;
 import me.dmk.app.util.StringUtil;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -17,6 +20,8 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 public class CurrentlyPlayingCommand extends PlayerCommand {
     public CurrentlyPlayingCommand() {
         super("currently-playing", "Wyświetla aktualnie grany utwór");
+
+        this.setRequiredUserOnChannel(false);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
-                "Aktualnie gram:",
+                EmojiUtil.getMusialNote() + " Aktualnie gram:",
                 "**" + playingTrack.getInfo().title + "**",
                 "",
                 "Długość: **" + StringUtil.millisToString(trackDuration) + "**",
@@ -48,6 +53,12 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         );
         embedMessage.setYouTubeVideoImage(playingTrack);
 
-        embedMessage.createImmediateResponder(interaction);
+        ActionRow buttons = ActionRow.of(
+                Button.secondary("track-play-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+                Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
+                Button.secondary("track-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+        );
+
+        embedMessage.createImmediateResponder(interaction, buttons);
     }
 }

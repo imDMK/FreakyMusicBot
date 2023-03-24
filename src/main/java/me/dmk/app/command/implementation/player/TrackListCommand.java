@@ -5,6 +5,9 @@ import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.EmojiUtil;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -16,6 +19,8 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 public class TrackListCommand extends PlayerCommand {
     public TrackListCommand() {
         super("track-list", "Wyświetla listę zakolejkowanych utworów");
+
+        this.setRequiredUserOnChannel(false);
     }
 
     @Override
@@ -39,6 +44,10 @@ public class TrackListCommand extends PlayerCommand {
             i++;
         }
 
-        embedMessage.createImmediateResponder(interaction);
+        ActionRow buttons = ActionRow.of(
+                Button.secondary("track-list-clear", "Wyczyść kolejkę", EmojiUtil.getTrash())
+        );
+
+        embedMessage.createImmediateResponder(interaction, buttons);
     }
 }
