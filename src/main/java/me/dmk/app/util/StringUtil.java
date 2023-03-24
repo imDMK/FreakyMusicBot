@@ -25,7 +25,7 @@ public class StringUtil {
     public static String formatLong(long i, String single, String second, String many) {
         long iDivided = i % 10L;
 
-        return (i == 1 ? single : (i < 5 || i > 20 && iDivided < 5 && iDivided != 1) ? second : many);
+        return (i == 1 ? single : (i > 1 && iDivided < 5 && iDivided != 1 && iDivided != 0) ? second : many);
     }
 
     public static String durationToString(Duration duration) {
