@@ -44,7 +44,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (this.repeat) {
+        if (this.repeat && endReason == AudioTrackEndReason.FINISHED) {
             this.player.playTrack(track.makeClone());
         } else if (endReason.mayStartNext) {
             this.nextTrack();
