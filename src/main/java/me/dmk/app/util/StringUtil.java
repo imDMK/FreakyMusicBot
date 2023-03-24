@@ -28,8 +28,7 @@ public class StringUtil {
         return (i == 1 ? single : (i < 5 || i > 20 && iDivided < 5 && iDivided != 1) ? second : many);
     }
 
-    public static String millisToString(long milliseconds) {
-        Duration duration = Duration.ofMillis(milliseconds);
+    public static String durationToString(Duration duration) {
         if (duration.isNegative() || duration.isZero()) {
             return "<1s";
         }
@@ -76,5 +75,11 @@ public class StringUtil {
         }
 
         return stringBuilder.toString();
+    }
+
+    public static String millisToString(long millis) {
+        return durationToString(
+                Duration.ofMillis(millis)
+        );
     }
 }

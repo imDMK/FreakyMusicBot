@@ -40,10 +40,11 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
-                "Aktualnie gram:\n" +
-                "**" + playingTrack.getInfo().title + "**\n" +
-                "**Długość:** " + StringUtil.millisToString(trackDuration) + "\n" +
-                "**Pozostały czas:** " + StringUtil.millisToString(remainingTrackTime)
+                "Aktualnie gram:",
+                "**" + playingTrack.getInfo().title + "**",
+                "",
+                "Długość: **" + StringUtil.millisToString(trackDuration) + "**",
+                "Pozostały czas: **" + StringUtil.millisToString(remainingTrackTime) + "**"
         );
         embedMessage.setYouTubeVideoImage(playingTrack);
 

@@ -30,7 +30,7 @@ public class RepeatCommand extends PlayerCommand {
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
-                (isRepeat ? "Włączono" : "Wyłączono") + " powtarzanie utworu:\n" +
+                "**" + (isRepeat ? "Włączono" : "Wyłączono") + "** powtarzanie utworu:",
                 "**" + playingTrackTitle + "**"
         );
 

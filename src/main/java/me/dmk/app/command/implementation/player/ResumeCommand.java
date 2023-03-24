@@ -69,8 +69,8 @@ public class ResumeCommand extends PlayerCommand {
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
         embedMessage.setDescription(
-                "Wznowiono odtwarzanie utworu:\n**"
-                + playingTrack.getInfo().title + "**"
+                "Wznowiono odtwarzanie utworu:",
+                "**" + playingTrack.getInfo().title + "**"
         );
 
         embedMessage.createImmediateResponder(interaction);

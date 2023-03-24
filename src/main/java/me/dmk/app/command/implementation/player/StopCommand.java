@@ -69,8 +69,8 @@ public class StopCommand extends PlayerCommand {
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
         embedMessage.setDescription(
-                "Zatrzymano utwór:\n**"
-                + playingTrack.getInfo().title + "**"
+                "Zatrzymano utwór:",
+                "**" + playingTrack.getInfo().title + "**"
         );
 
         embedMessage.createImmediateResponder(interaction);

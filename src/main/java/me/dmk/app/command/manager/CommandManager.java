@@ -2,11 +2,13 @@ package me.dmk.app.command.manager;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import lombok.RequiredArgsConstructor;
+import me.dmk.app.MusicApp;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.command.implementation.LyricsCommand;
 import me.dmk.app.command.implementation.PlayCommand;
+import me.dmk.app.command.implementation.StatusCommand;
 import me.dmk.app.command.implementation.player.*;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.interaction.SlashCommandBuilder;
@@ -23,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class CommandManager {
 
+    private final MusicApp musicApp;
     private final DiscordApi discordApi;
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
@@ -41,6 +44,7 @@ public class CommandManager {
 
         Command lyricsCommand = new LyricsCommand();
         Command playCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
+        Command statusCommand = new StatusCommand(this.musicApp);
 
         this.register(
                 currentlyPlayingCommand,
@@ -53,7 +57,8 @@ public class CommandManager {
                 volumeCommand,
 
                 lyricsCommand,
-                playCommand
+                playCommand,
+                statusCommand
         );
     }
 

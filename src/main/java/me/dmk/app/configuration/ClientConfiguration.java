@@ -11,4 +11,6 @@ import lombok.Getter;
 public class ClientConfiguration extends OkaeriConfig {
 
     public String token = "MTA4NzEyNjI5MzQ0NDgzNzUxOA.GuWA8P.hK9G_C1WdAKiMXcTo4NDrlQTJQK1USNTI_aqxA";
+
+    public boolean debug = false;
 }

@@ -63,13 +63,25 @@ public class SkipCommand extends PlayerCommand {
 
         AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
-        String embedDescrption;
+        String[] embedDescrption;
         if (nextTrack == null) {
-            embedDescrption = "**Brak**";
+            embedDescrption = new String[]{
+                    "Pomięto utwór:",
+                    "**" + playingTrack.getInfo().title + "**",
+                    "",
+                    "Następny utwór:",
+                    "**Brak**"
+            };
         } else {
-            embedDescrption =
-                    "**" + nextTrack.getInfo().title + "**\n" +
-                    "**Długość:**" + StringUtil.millisToString(nextTrack.getDuration());
+            embedDescrption = new String[]{
+                    "Pomięto utwór:",
+                    "**" + playingTrack.getInfo().title + "**",
+                    "",
+                    "Następny utwór:",
+                    "**" + nextTrack.getInfo().title + "**",
+                    "",
+                    "Długość: **" + StringUtil.millisToString(nextTrack.getDuration()) + "**"
+            };
         }
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();

@@ -21,7 +21,6 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandOption;
-import org.javacord.api.interaction.SlashCommandOptionType;
 import org.javacord.api.interaction.callback.InteractionOriginalResponseUpdater;
 
 import java.util.Optional;
@@ -42,8 +41,7 @@ public class PlayCommand extends Command {
         this.serverAudioPlayerMap = serverAudioPlayerMap;
 
         this.addOption(
-                SlashCommandOption.create(
-                        SlashCommandOptionType.STRING,
+                SlashCommandOption.createStringOption(
                         "search",
                         "Podaj nazwę lub link do utworu",
                         true
@@ -127,8 +125,9 @@ public class PlayCommand extends Command {
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
                 embedMessage.setDescription(
-                        "Zakolejkowano utwór:\n" +
-                        "**" + track.getInfo().title + "**\n" +
+                        "Zakolejkowano utwór:",
+                        "**" + track.getInfo().title + "**",
+                        "",
                         "**Długość:** " + StringUtil.millisToString(track.getDuration())
                 );
                 embedMessage.setYouTubeVideoImage(track);
@@ -140,20 +139,23 @@ public class PlayCommand extends Command {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getTracks().get(0);
 
-                String embedDescrption;
+                String[] embedDescrption;
                 if (playlist.isSearchResult()) {
                     trackScheduler.queue(firstTrack);
 
-                    embedDescrption =
-                            "Zakolejkowano utwór:\n" +
-                            "**" + firstTrack.getInfo().title + "**\n" +
-                            "**Długość:** " + StringUtil.millisToString(firstTrack.getDuration());
+                    embedDescrption = new String[]{
+                            "Zakolejkowano utwór:",
+                            "**" + firstTrack.getInfo().title + "**",
+                            "",
+                            "Długość: **" + StringUtil.millisToString(firstTrack.getDuration()) + "**"
+                    };
                 } else {
                     playlist.getTracks().forEach(trackScheduler::queue);
 
-                    embedDescrption =
-                            "Zakolejkowano wszystkie utwory z playlisty:\n" +
-                            "**" + playlist.getName() + "**";
+                    embedDescrption = new String[]{
+                            "Zakolejkowano wszystkie utwory z playlisty:",
+                            "**" + playlist.getName() + "**"
+                    };
                 }
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();

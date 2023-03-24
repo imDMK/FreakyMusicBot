@@ -14,7 +14,9 @@ import me.dmk.app.listener.SlashCommandListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.ExceptionLogger;
+import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 
+import java.time.Instant;
 import java.util.stream.Stream;
 
 /**
@@ -25,10 +27,14 @@ import java.util.stream.Stream;
 @Getter
 public class MusicApp {
 
+    private final Instant startInstant;
+
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
 
     protected MusicApp() {
+        this.startInstant = Instant.now();
+
         ClientConfiguration clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
             config.withConfigurer(new JsonSimpleConfigurer());
             config.withBindFile("configuration.json");
@@ -36,6 +42,8 @@ public class MusicApp {
             config.saveDefaults();
             config.load(true);
         });
+
+        FallbackLoggerConfiguration.setDebug(clientConfiguration.isDebug());
 
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(true)); //True to allow search
@@ -59,7 +67,7 @@ public class MusicApp {
 
         log.info("Connected to shard " + currentShard);
 
-        CommandManager commandManager = new CommandManager(discordApi, this.audioPlayerManager, this.serverAudioPlayerMap);
+        CommandManager commandManager = new CommandManager(this, discordApi, this.audioPlayerManager, this.serverAudioPlayerMap);
         commandManager.registerCommands();
 
         Stream.of(

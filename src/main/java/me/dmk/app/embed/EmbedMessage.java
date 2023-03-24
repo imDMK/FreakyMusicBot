@@ -50,6 +50,12 @@ public class EmbedMessage extends EmbedBuilder {
         return this;
     }
 
+    public void setDescription(String... strings) {
+        this.setDescription(
+                String.join("\n", strings)
+        );
+    }
+
     public void setYouTubeVideoImage(AudioTrack audioTrack) {
         if (audioTrack != null) {
             this.setImage(
