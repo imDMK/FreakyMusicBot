@@ -15,7 +15,7 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 
 public class TrackListCommand extends PlayerCommand {
     public TrackListCommand() {
-        super("tracklist", "Wyświetla listę zakolejkowanych utworów");
+        super("track-list", "Wyświetla listę zakolejkowanych utworów");
     }
 
     @Override
