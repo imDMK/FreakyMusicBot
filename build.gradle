@@ -24,15 +24,12 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.javacord:javacord:3.8.0-SNAPSHOT'
+    implementation 'org.javacord:javacord:3.8.1-SNAPSHOT'
     implementation 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
     implementation 'com.sedmelluq:lavaplayer:1.3.77'
     implementation 'com.github.jagrosh:JLyrics:master-SNAPSHOT'
 
     implementation 'org.slf4j:slf4j-simple:2.0.7'
-
-    runtimeOnly 'org.apache.logging.log4j:log4j-to-slf4j:2.17.0'
-    runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
 
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
