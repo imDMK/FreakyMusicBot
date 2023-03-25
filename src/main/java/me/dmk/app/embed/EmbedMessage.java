@@ -29,8 +29,8 @@ public class EmbedMessage extends EmbedBuilder {
         this.setTimestampToNow();
 
         server.getIcon()
-                .ifPresentOrElse(icon -> 
-                        this.setFooter(server.getName(), icon), 
+                .ifPresentOrElse(icon ->
+                                this.setFooter(server.getName(), icon),
                         () -> this.setFooter(server.getName())
                 );
     }

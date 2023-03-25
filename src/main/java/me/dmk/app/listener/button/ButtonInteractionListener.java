@@ -1,8 +1,9 @@
-package me.dmk.app.listener;
+package me.dmk.app.listener.button;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.AllArgsConstructor;
+import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.embed.EmbedMessage;
 import me.dmk.app.util.StringUtil;
@@ -14,6 +15,7 @@ import org.javacord.api.event.interaction.ButtonClickEvent;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.listener.interaction.ButtonClickListener;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -51,8 +53,25 @@ public class ButtonInteractionListener implements ButtonClickListener {
             return;
         }
 
-        switch (customId) {
-            case "track-list-clear" -> this.serverAudioPlayerMap.get(server.getId()).ifPresentOrElse(serverAudioPlayer -> {
+        Arrays.stream(ButtonInteractionType.values())
+                .filter(interactionType -> interactionType.getMessageId().equals(customId))
+                .forEachOrdered(interactionType ->
+                        this.onButtonClick(interaction, interactionType, server, user, message)
+                );
+    }
+
+    public void onButtonClick(ButtonInteraction interaction, ButtonInteractionType interactionType, Server server, User user, Message message) {
+        Optional<ServerAudioPlayer> serverAudioPlayerOptional = this.serverAudioPlayerMap.get(server.getId());
+        if (serverAudioPlayerOptional.isEmpty()) {
+            return;
+        }
+
+        ServerAudioPlayer serverAudioPlayer = serverAudioPlayerOptional.get();
+        AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+
+        switch (interactionType) {
+            case TRACK_LIST_CLEAR -> {
                 serverAudioPlayer.getTrackScheduler().getQueue().clear();
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
@@ -62,17 +81,9 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
-            }, () -> {
-                EmbedMessage embedMessage = new EmbedMessage(server).error();
+            }
 
-                embedMessage.setDescription("Aktualnie nie gram.");
-                
-                message.edit(embedMessage);
-                interaction.createImmediateResponder().respond();
-            });
-
-            case "track-play-stop" -> this.serverAudioPlayerMap.get(server.getId()).ifPresentOrElse(serverAudioPlayer -> {
-                AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+            case TRACK_PLAY_OR_STOP -> {
                 audioPlayer.setPaused(!audioPlayer.isPaused());
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
@@ -85,18 +96,9 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
-            }, () -> {
-                EmbedMessage embedMessage = new EmbedMessage(server).error();
-                embedMessage.setDescription("Aktualnie nie gram.");
+            }
 
-                message.edit(embedMessage);
-                interaction.createImmediateResponder().respond();
-            });
-
-            case "track-skip" -> this.serverAudioPlayerMap.get(server.getId()).ifPresentOrElse(serverAudioPlayer -> {
-                AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
-                AudioTrack playingTrack = audioPlayer.getPlayingTrack();
-
+            case TRACK_SKIP -> {
                 if (playingTrack == null) {
                     return;
                 }
@@ -135,17 +137,9 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
-            }, () -> {
-                EmbedMessage embedMessage = new EmbedMessage(server).error();
-                embedMessage.setDescription("Aktualnie nie gram.");
+            }
 
-                message.edit(embedMessage);
-                interaction.createImmediateResponder().respond();
-            });
-
-            case "track-repeat" -> this.serverAudioPlayerMap.get(server.getId()).ifPresentOrElse(serverAudioPlayer -> {
-                AudioTrack playingTrack = serverAudioPlayer.getAudioPlayer().getPlayingTrack();
-
+            case TRACK_REPEAT -> {
                 String playingTrackTitle = (playingTrack == null ? "Następnego utworu" : playingTrack.getInfo().title);
 
                 boolean isRepeat = serverAudioPlayer.getTrackScheduler().switchRepeat();
@@ -160,13 +154,7 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
-            }, () -> {
-                EmbedMessage embedMessage = new EmbedMessage(server).error();
-                embedMessage.setDescription("Aktualnie nie gram.");
-
-                message.edit(embedMessage);
-                interaction.createImmediateResponder().respond();
-            });
+            }
         }
     }
 }

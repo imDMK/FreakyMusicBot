@@ -54,9 +54,9 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         embedMessage.setYouTubeVideoImage(playingTrack);
 
         ActionRow buttons = ActionRow.of(
-                Button.secondary("track-play-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+                Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
                 Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
-                Button.secondary("track-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+                Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
         );
 
         embedMessage.createImmediateResponder(interaction, buttons);
