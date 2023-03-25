@@ -139,11 +139,11 @@ public class PlayCommand extends Command {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getTracks().get(0);
 
-                String[] embedDescrption;
+                String[] embedDescription;
                 if (playlist.isSearchResult()) {
                     trackScheduler.queue(firstTrack);
 
-                    embedDescrption = new String[]{
+                    embedDescription = new String[]{
                             "Zakolejkowano utwór:",
                             "**" + firstTrack.getInfo().title + "**",
                             "",
@@ -152,7 +152,7 @@ public class PlayCommand extends Command {
                 } else {
                     playlist.getTracks().forEach(trackScheduler::queue);
 
-                    embedDescrption = new String[]{
+                    embedDescription = new String[]{
                             "Zakolejkowano wszystkie utwory z playlisty:",
                             "**" + playlist.getName() + "**"
                     };
@@ -160,7 +160,7 @@ public class PlayCommand extends Command {
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                embedMessage.setDescription(embedDescrption);
+                embedMessage.setDescription(embedDescription);
                 embedMessage.setYouTubeVideoImage(firstTrack);
 
                 responseUpdater.addEmbed(embedMessage).update();

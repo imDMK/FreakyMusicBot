@@ -40,7 +40,7 @@ public class VolumeCommand extends PlayerCommand {
         serverAudioPlayer.getAudioPlayer().setVolume(volume);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Zmieniono głośność na " + volume + "%.");
+        embedMessage.setDescription("Zmieniono głośność utworu na " + volume + "%.");
 
         embedMessage.createImmediateResponder(interaction);
     }

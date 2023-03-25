@@ -49,9 +49,9 @@ public class SkipCommand extends PlayerCommand {
 
         AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
-        String[] embedDescrption;
+        String[] embedDescription;
         if (nextTrack == null) {
-            embedDescrption = new String[]{
+            embedDescription = new String[]{
                     "Pomięto utwór:",
                     "**" + playingTrack.getInfo().title + "**",
                     "",
@@ -59,7 +59,7 @@ public class SkipCommand extends PlayerCommand {
                     "**Brak**"
             };
         } else {
-            embedDescrption = new String[]{
+            embedDescription = new String[]{
                     "Pomięto utwór:",
                     "**" + playingTrack.getInfo().title + "**",
                     "",
@@ -72,7 +72,7 @@ public class SkipCommand extends PlayerCommand {
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-        embedMessage.setDescription(embedDescrption);
+        embedMessage.setDescription(embedDescription);
         embedMessage.setYouTubeVideoImage(nextTrack);
 
         embedMessage.createImmediateResponder(interaction);
