@@ -108,9 +108,9 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
-                String[] embedDescrption;
+                String[] embedDescription;
                 if (nextTrack == null) {
-                    embedDescrption = new String[]{
+                    embedDescription = new String[]{
                             "Pomięto utwór:",
                             "**" + playingTrack.getInfo().title + "**",
                             "",
@@ -118,7 +118,7 @@ public class ButtonInteractionListener implements ButtonClickListener {
                             "**Brak**"
                     };
                 } else {
-                    embedDescrption = new String[]{
+                    embedDescription = new String[]{
                             "Pomięto utwór:",
                             "**" + playingTrack.getInfo().title + "**",
                             "",
@@ -132,7 +132,7 @@ public class ButtonInteractionListener implements ButtonClickListener {
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
                 embedMessage.setAuthor(user);
-                embedMessage.setDescription(embedDescrption);
+                embedMessage.setDescription(embedDescription);
                 embedMessage.setYouTubeVideoImage(nextTrack);
 
                 message.edit(embedMessage);
