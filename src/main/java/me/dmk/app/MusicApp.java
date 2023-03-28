@@ -30,13 +30,15 @@ public class MusicApp {
 
     private final Instant startInstant;
 
+    private final ClientConfiguration clientConfiguration;
+
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
 
     protected MusicApp() {
         this.startInstant = Instant.now();
 
-        ClientConfiguration clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
+        this.clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
             config.withConfigurer(new JsonSimpleConfigurer());
             config.withBindFile("configuration.json");
             config.withRemoveOrphans(true);
@@ -44,7 +46,7 @@ public class MusicApp {
             config.load(true);
         });
 
-        FallbackLoggerConfiguration.setDebug(clientConfiguration.isDebug());
+        FallbackLoggerConfiguration.setDebug(this.clientConfiguration.isDebug());
 
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(true)); //True to allow search
@@ -52,7 +54,7 @@ public class MusicApp {
         this.serverAudioPlayerMap = new ServerAudioPlayerMap(this.audioPlayerManager);
 
         new DiscordApiBuilder()
-                .setToken(clientConfiguration.getToken())
+                .setToken(this.clientConfiguration.getToken())
                 .setAllIntents()
                 .setRecommendedTotalShards()
                 .join()
@@ -75,6 +77,11 @@ public class MusicApp {
                 new ButtonInteractionListener(this.serverAudioPlayerMap),
                 new SlashCommandListener(commandManager, this.serverAudioPlayerMap)
         ).forEach(discordApi::addListener);
+
+        discordApi.updateActivity(
+                this.clientConfiguration.getActivityType(),
+                this.clientConfiguration.getActivityName()
+        );
 
         log.info("Shard " + currentShard + " ready.");
     }
