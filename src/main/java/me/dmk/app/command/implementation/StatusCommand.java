@@ -4,6 +4,7 @@ import me.dmk.app.MusicApp;
 import me.dmk.app.command.Command;
 import me.dmk.app.embed.EmbedMessage;
 import me.dmk.app.util.StringUtil;
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -27,10 +28,12 @@ public class StatusCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteraction interaction, Server server, User user) {
-        int totalShards = interaction.getApi().getTotalShards();
-        int currentShard = interaction.getApi().getCurrentShard();
+        DiscordApi discordApi = interaction.getApi();
 
-        long gatewayLatency = interaction.getApi().getLatestGatewayLatency().toMillis();
+        int totalShards = discordApi.getTotalShards();
+        int currentShard = discordApi.getCurrentShard();
+
+        long gatewayLatency = discordApi.getLatestGatewayLatency().toMillis();
         long start = System.currentTimeMillis();
 
         Duration uptime = Duration.between(this.musicApp.getStartInstant(), Instant.now());
@@ -49,7 +52,9 @@ public class StatusCommand extends Command {
                             "Opóźnienie bramy Discord: **" + gatewayLatency + "ms**",
                             "Opóźnienie klienta: **" + elapsedTime + "ms**",
                             "",
-                            "Działam od: **" + StringUtil.durationToString(uptime) + "**"
+                            "Działam od: **" + StringUtil.durationToString(uptime) + "**",
+                            "",
+                            "Zaproś mnie na swój serwer używając: " + discordApi.createBotInvite()
                     );
 
                     responseUpdater.addEmbed(embedMessage).update();
