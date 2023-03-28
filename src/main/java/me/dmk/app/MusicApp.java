@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import eu.okaeri.configs.ConfigManager;
-import eu.okaeri.configs.json.simple.JsonSimpleConfigurer;
+import eu.okaeri.configs.json.gson.JsonGsonConfigurer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
@@ -39,7 +39,7 @@ public class MusicApp {
         this.startInstant = Instant.now();
 
         this.clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
-            config.withConfigurer(new JsonSimpleConfigurer());
+            config.withConfigurer(new JsonGsonConfigurer());
             config.withBindFile("configuration.json");
             config.withRemoveOrphans(true);
             config.saveDefaults();

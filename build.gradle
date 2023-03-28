@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     implementation 'org.javacord:javacord:3.8.1-SNAPSHOT'
-    implementation 'eu.okaeri:okaeri-configs-json-simple:5.0.0-beta.5'
+    implementation 'eu.okaeri:okaeri-configs-json-gson:5.0.0-beta.5'
     implementation 'com.sedmelluq:lavaplayer:1.3.77'
     implementation 'com.github.jagrosh:JLyrics:master-SNAPSHOT'
 
