@@ -11,11 +11,14 @@ import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.EmojiUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.audio.AudioSource;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -132,7 +135,16 @@ public class PlayCommand extends Command {
                 );
                 embedMessage.setYouTubeVideoImage(track);
 
-                responseUpdater.addEmbed(embedMessage).update();
+                ActionRow buttons = ActionRow.of(
+                        Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+                        Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
+                        Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+                );
+
+                responseUpdater
+                        .addEmbed(embedMessage)
+                        .addComponents(buttons)
+                        .update();
             }
 
             @Override
@@ -163,7 +175,16 @@ public class PlayCommand extends Command {
                 embedMessage.setDescription(embedDescription);
                 embedMessage.setYouTubeVideoImage(firstTrack);
 
-                responseUpdater.addEmbed(embedMessage).update();
+                ActionRow buttons = ActionRow.of(
+                        Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+                        Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
+                        Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+                );
+
+                responseUpdater
+                        .addEmbed(embedMessage)
+                        .addComponents(buttons)
+                        .update();
             }
 
             @Override
