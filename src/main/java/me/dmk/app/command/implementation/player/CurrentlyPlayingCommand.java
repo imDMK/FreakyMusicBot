@@ -40,16 +40,19 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         long trackDuration = playingTrack.getDuration();
         long trackPosition = playingTrack.getPosition();
 
-        long remainingTrackTime = trackDuration - trackPosition;
+        int progress = (int) Math.round(((double) trackPosition / trackDuration) * 20);
+
+        String progressBar = StringUtil.createProgressBar(progress, 20);
+        String trackDurationFormatted = StringUtil.millisToString(trackDuration);
+        String trackPositionFormatted = StringUtil.millisToString(trackPosition);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
                 EmojiUtil.getMusialNote() + " Aktualnie gram:",
-                "**" + playingTrack.getInfo().title + "**",
                 "",
-                "Długość: **" + StringUtil.millisToString(trackDuration) + "**",
-                "Pozostały czas: **" + StringUtil.millisToString(remainingTrackTime) + "**"
+                "**" + playingTrack.getInfo().title + "**",
+                trackPositionFormatted + " " + progressBar + " " + trackDurationFormatted
         );
         embedMessage.setYouTubeVideoImage(playingTrack);
 

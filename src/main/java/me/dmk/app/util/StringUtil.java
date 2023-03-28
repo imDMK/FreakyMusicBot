@@ -3,6 +3,7 @@ package me.dmk.app.util;
 import lombok.experimental.UtilityClass;
 
 import java.time.Duration;
+import java.util.stream.Stream;
 
 /**
  * Created by DMK on 20.03.2023
@@ -17,15 +18,9 @@ public class StringUtil {
 
     public String getImageFromYouTubeVideo(String videoIdentifier) {
         return String.format(
-                "https://img.youtube.com/vi/%s/sddefault.jpg",
+                "https://img.youtube.com/vi/%s/mqdefault.jpg",
                 videoIdentifier
         );
-    }
-
-    public static String formatLong(long i, String single, String second, String many) {
-        long iDivided = i % 10L;
-
-        return (i == 1 ? single : (i > 1 && iDivided < 5 && iDivided != 1 && iDivided != 0) ? second : many);
     }
 
     public static String durationToString(Duration duration) {
@@ -33,45 +28,43 @@ public class StringUtil {
             return "<1s";
         }
 
-        long millis = duration.toMillis();
-        long seconds = duration.toSecondsPart();
-        long minutes = duration.toMinutesPart();
         long hours = duration.toHoursPart();
-        long days = duration.toDays();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (days > 0) {
-            stringBuilder.append(days)
-                    .append(" ")
-                    .append(formatLong(days, "dzień", "dni", "dni"))
-                    .append(", ");
-        }
-
         if (hours > 0) {
-            stringBuilder.append(hours)
-                    .append(" ")
-                    .append(formatLong(hours, "godzinę", "godziny", "godzin"))
-                    .append(", ");
+            if (hours < 10) {
+                stringBuilder
+                        .append("0")
+                        .append(hours)
+                        .append(":");
+            } else {
+                stringBuilder
+                        .append(hours)
+                        .append(":");
+            }
         }
 
-        if (minutes > 0) {
-            stringBuilder.append(minutes)
-                    .append(" ")
-                    .append(formatLong(minutes, "minutę", "minuty", "minut"))
-                    .append(", ");
+        if (minutes < 10) {
+            stringBuilder
+                    .append("0")
+                    .append(minutes)
+                    .append(":");
+        } else {
+            stringBuilder
+                    .append(minutes)
+                    .append(":");
         }
 
-        if (seconds > 0) {
-            stringBuilder.append(seconds)
-                    .append(" ")
-                    .append(formatLong(seconds, "sekundę", "sekundy", "sekund"));
-        }
-
-        if (stringBuilder.isEmpty() && millis > 0) {
-            stringBuilder.append(millis)
-                    .append(" ")
-                    .append("ms");
+        if (seconds < 10) {
+            stringBuilder
+                    .append("0")
+                    .append(seconds);
+        } else {
+            stringBuilder
+                    .append(seconds);
         }
 
         return stringBuilder.toString();
@@ -81,5 +74,27 @@ public class StringUtil {
         return durationToString(
                 Duration.ofMillis(millis)
         );
+    }
+
+    public static String createProgressBar(int progress, int length) {
+        if (progress > length) {
+            return "";
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Stream.generate(() -> "━")
+                .limit(length)
+                .forEach(stringBuilder::append);
+
+        for (int i = 0; i < progress; i++) {
+            stringBuilder.replace(i, i + 1, "⎯");
+
+            if (i == (progress - 1)) {
+                stringBuilder.replace(progress, progress, "⬤");
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }
