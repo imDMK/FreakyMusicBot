@@ -78,6 +78,8 @@ public class MusicApp {
                 new SlashCommandListener(commandManager, this.serverAudioPlayerMap)
         ).forEach(discordApi::addListener);
 
+        discordApi.setMessageCacheSize(10, 60 * 60); //1 hour
+
         discordApi.updateActivity(
                 this.clientConfiguration.getActivityType(),
                 this.clientConfiguration.getActivityName()
