@@ -28,4 +28,20 @@ public class EmojiUtil {
     public static String getPlayOrPause() {
         return "⏯";
     }
+
+    public static String getSpeakerWithThreeWaves() {
+        return "\uD83D\uDD0A"; //🔊
+    }
+
+    public static String getSpeakerWithOneWaves() {
+        return "\uD83D\uDD09"; //🔉
+    }
+
+    public static String getSpeaker() {
+        return "\uD83D\uDD08"; //🔈
+    }
+
+    public static String getSpeakerWithCancellationStroke() {
+        return "\uD83D\uDD07"; //🔇
+    }
 }

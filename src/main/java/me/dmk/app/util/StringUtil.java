@@ -16,6 +16,22 @@ public class StringUtil {
         return string.startsWith("http://") || string.startsWith("https://");
     }
 
+    public String volumeToIcon(int volume) {
+        if (volume == 0) {
+            return EmojiUtil.getSpeakerWithCancellationStroke();
+        }
+
+        if (volume < 30) {
+            return EmojiUtil.getSpeaker();
+        }
+
+        if (volume < 60) {
+            return EmojiUtil.getSpeakerWithOneWaves();
+        }
+
+        return EmojiUtil.getSpeakerWithThreeWaves();
+    }
+
     public String getImageFromYouTubeVideo(String videoIdentifier) {
         return String.format(
                 "https://img.youtube.com/vi/%s/mqdefault.jpg",

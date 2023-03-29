@@ -3,6 +3,7 @@ package me.dmk.app.command.implementation.player;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.StringUtil;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -40,7 +41,7 @@ public class VolumeCommand extends PlayerCommand {
         serverAudioPlayer.getAudioPlayer().setVolume(volume);
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Zmieniono głośność utworu na " + volume + "%.");
+        embedMessage.setDescription(StringUtil.volumeToIcon(volume) + " Zmieniono głośność na " + volume + "%.");
 
         embedMessage.createImmediateResponder(interaction);
     }
