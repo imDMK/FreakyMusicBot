@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.command.PlayerCommand;
-import me.dmk.app.command.manager.CommandManager;
+import me.dmk.app.command.service.CommandService;
 import me.dmk.app.embed.EmbedMessage;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.entity.server.Server;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SlashCommandListener implements SlashCommandCreateListener {
 
-    private final CommandManager commandManager;
+    private final CommandService commandService;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
 
     @Override
@@ -40,7 +40,7 @@ public class SlashCommandListener implements SlashCommandCreateListener {
 
         Server server = serverOptional.get();
 
-        Optional<SlashCommandBuilder> commandBuilderOptional = this.commandManager.get(commandName);
+        Optional<SlashCommandBuilder> commandBuilderOptional = this.commandService.get(commandName);
         if (commandBuilderOptional.isEmpty()) {
             return;
         }

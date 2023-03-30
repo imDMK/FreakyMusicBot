@@ -1,4 +1,4 @@
-package me.dmk.app.command.manager;
+package me.dmk.app.command.service;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @RequiredArgsConstructor
-public class CommandManager {
+public class CommandService {
 
     private final MusicApp musicApp;
-    private final DiscordApi discordApi;
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
 
     private final Map<String, SlashCommandBuilder> commandBuilderMap = new ConcurrentHashMap<>();
 
-    public void registerCommands() {
+    public void registerCommands(DiscordApi discordApi) {
         PlayerCommand currentlyPlayingCommand = new CurrentlyPlayingCommand();
         PlayerCommand leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
         PlayerCommand repeatCommand = new RepeatCommand();
@@ -46,7 +45,7 @@ public class CommandManager {
         Command playCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
         Command statusCommand = new StatusCommand(this.musicApp);
 
-        this.register(
+        this.register(discordApi,
                 currentlyPlayingCommand,
                 leaveCommand,
                 repeatCommand,
@@ -62,7 +61,7 @@ public class CommandManager {
         );
     }
 
-    public void register(SlashCommandBuilder... slashCommandBuilders) {
+    public void register(DiscordApi discordApi, SlashCommandBuilder... slashCommandBuilders) {
         for (SlashCommandBuilder commandBuilder : slashCommandBuilders) {
             if (commandBuilder instanceof PlayerCommand playerCommand) {
                 this.commandBuilderMap.put(playerCommand.getName(), playerCommand);
@@ -73,7 +72,7 @@ public class CommandManager {
             }
         }
 
-        this.discordApi.bulkOverwriteGlobalApplicationCommands(
+        discordApi.bulkOverwriteGlobalApplicationCommands(
                 Set.of(slashCommandBuilders)
         );
     }
