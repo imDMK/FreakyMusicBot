@@ -61,7 +61,7 @@ public class CommandService {
         );
     }
 
-    public void register(DiscordApi discordApi, SlashCommandBuilder... slashCommandBuilders) {
+    private void register(DiscordApi discordApi, SlashCommandBuilder... slashCommandBuilders) {
         for (SlashCommandBuilder commandBuilder : slashCommandBuilders) {
             if (commandBuilder instanceof PlayerCommand playerCommand) {
                 this.commandBuilderMap.put(playerCommand.getName(), playerCommand);

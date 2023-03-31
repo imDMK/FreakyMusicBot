@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.listener.button.ButtonInteractionType;
 import me.dmk.app.util.EmojiUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.message.component.ActionRow;
@@ -58,9 +59,9 @@ public class CurrentlyPlayingCommand extends PlayerCommand {
         embedMessage.setYouTubeVideoImage(playingTrack);
 
         ActionRow buttons = ActionRow.of(
-                Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-                Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
-                Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+                Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+                Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
+                Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
         );
 
         embedMessage.createImmediateResponder(interaction, buttons);

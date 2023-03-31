@@ -11,6 +11,7 @@ import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.listener.button.ButtonInteractionType;
 import me.dmk.app.util.EmojiUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.DiscordApi;
@@ -36,6 +37,12 @@ public class PlayCommand extends Command {
 
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
+
+    private final ActionRow buttons = ActionRow.of(
+            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+            Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
+            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+    );
 
     public PlayCommand(AudioPlayerManager audioPlayerManager, ServerAudioPlayerMap serverAudioPlayerMap) {
         super("play", "Puść ulubiony utwór");
@@ -135,12 +142,6 @@ public class PlayCommand extends Command {
                 );
                 embedMessage.setYouTubeVideoImage(track);
 
-                ActionRow buttons = ActionRow.of(
-                        Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-                        Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
-                        Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-                );
-
                 responseUpdater
                         .addEmbed(embedMessage)
                         .addComponents(buttons)
@@ -174,12 +175,6 @@ public class PlayCommand extends Command {
 
                 embedMessage.setDescription(embedDescription);
                 embedMessage.setYouTubeVideoImage(firstTrack);
-
-                ActionRow buttons = ActionRow.of(
-                        Button.secondary("track-play-or-stop", "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-                        Button.secondary("track-skip", "Pomiń utwór", EmojiUtil.getNextTrack()),
-                        Button.secondary("track-toggle-repeat", "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-                );
 
                 responseUpdater
                         .addEmbed(embedMessage)

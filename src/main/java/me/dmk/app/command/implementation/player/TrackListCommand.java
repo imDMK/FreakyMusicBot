@@ -5,6 +5,7 @@ import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.listener.button.ButtonInteractionType;
 import me.dmk.app.util.EmojiUtil;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
@@ -45,7 +46,7 @@ public class TrackListCommand extends PlayerCommand {
         }
 
         ActionRow buttons = ActionRow.of(
-                Button.secondary("track-list-clear", "Wyczyść kolejkę", EmojiUtil.getTrash())
+                Button.secondary(ButtonInteractionType.TRACK_LIST_CLEAR.getMessageId(), "Wyczyść kolejkę", EmojiUtil.getTrash())
         );
 
         embedMessage.createImmediateResponder(interaction, buttons);
