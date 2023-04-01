@@ -18,9 +18,9 @@ import org.javacord.api.interaction.SlashCommandInteraction;
  * Created by DMK on 21.03.2023
  */
 
-public class CurrentlyPlayingCommand extends PlayerCommand {
-    public CurrentlyPlayingCommand() {
-        super("currently-playing", "Wyświetla aktualnie grany utwór");
+public class NowPlayingCommand extends PlayerCommand {
+    public NowPlayingCommand() {
+        super("now-playing", "Wyświetla aktualnie grany utwór");
 
         this.setRequiredUserOnChannel(false);
     }

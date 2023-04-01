@@ -32,7 +32,7 @@ public class CommandService {
     private final Map<String, SlashCommandBuilder> commandBuilderMap = new ConcurrentHashMap<>();
 
     public void registerCommands(DiscordApi discordApi) {
-        PlayerCommand currentlyPlayingCommand = new CurrentlyPlayingCommand();
+        PlayerCommand currentlyPlayingCommand = new NowPlayingCommand();
         PlayerCommand leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
         PlayerCommand repeatCommand = new RepeatCommand();
         PlayerCommand resumeCommand = new ResumeCommand();
