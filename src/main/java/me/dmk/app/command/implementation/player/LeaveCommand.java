@@ -34,7 +34,7 @@ public class LeaveCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Aktualnie nie gram.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
@@ -48,8 +48,8 @@ public class LeaveCommand extends PlayerCommand {
         this.serverAudioPlayerMap.remove(server.getId());
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
-        embedMessage.setDescription("Opuściłem kanał oraz kolejka utworów została wyczyszczona.");
 
+        embedMessage.setDescription("Opuściłem kanał oraz kolejka utworów została wyczyszczona.");
         embedMessage.createImmediateResponder(interaction);
     }
 }

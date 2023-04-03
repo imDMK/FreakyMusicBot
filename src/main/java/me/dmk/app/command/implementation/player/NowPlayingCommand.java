@@ -19,6 +19,13 @@ import org.javacord.api.interaction.SlashCommandInteraction;
  */
 
 public class NowPlayingCommand extends PlayerCommand {
+
+    private final ActionRow buttons = ActionRow.of(
+            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
+            Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
+            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
+    );
+
     public NowPlayingCommand() {
         super("now-playing", "Wyświetla aktualnie grany utwór");
 
@@ -34,7 +41,7 @@ public class NowPlayingCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
 
             embedMessage.setDescription("Aktualnie nie gram.");
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
@@ -56,14 +63,10 @@ public class NowPlayingCommand extends PlayerCommand {
                 "**" + playingTrack.getInfo().title + "**",
                 trackPositionFormatted + " " + progressBar + " " + trackDurationFormatted
         );
+
         embedMessage.setYouTubeVideoImage(playingTrack);
+        embedMessage.setHighLevelComponents(this.buttons);
 
-        ActionRow buttons = ActionRow.of(
-                Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-                Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
-                Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-        );
-
-        embedMessage.createImmediateResponder(interaction, buttons);
+        embedMessage.createImmediateResponder(interaction);
     }
 }

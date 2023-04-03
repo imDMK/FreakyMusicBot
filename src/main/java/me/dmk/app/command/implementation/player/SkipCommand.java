@@ -29,7 +29,7 @@ public class SkipCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Aktualnie nie gram.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
@@ -40,7 +40,7 @@ public class SkipCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Aktualnie nie gram.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 

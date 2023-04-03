@@ -24,6 +24,8 @@ public class EmbedMessage extends EmbedBuilder {
     private final Color successColor = new Color(50, 255, 0);
     private final Color errorColor = new Color(255, 0, 0);
 
+    private HighLevelComponent[] highLevelComponents;
+
     public EmbedMessage(Server server) {
         this.server = server;
         this.setTimestampToNow();
@@ -66,25 +68,23 @@ public class EmbedMessage extends EmbedBuilder {
             );
         }
     }
+
+    public void setHighLevelComponents(HighLevelComponent... highLevelComponents) {
+        this.highLevelComponents = highLevelComponents;
+    }
     
     public void createImmediateResponder(InteractionBase interactionBase) {
-        interactionBase.createImmediateResponder()
-                .addEmbed(this)
-                .respond();
+        this.createImmediateResponder(interactionBase, false);
     }
 
-    public void createImmediateResponder(InteractionBase interactionBase, HighLevelComponent... highLevelComponents) {
-        interactionBase.createImmediateResponder()
-                .addEmbed(this)
-                .addComponents(highLevelComponents)
-                .respond();
-    }
-
-    public void createImmediateResponder(InteractionBase interactionBase, boolean ephermal, HighLevelComponent... highLevelComponents) {
+    public void createImmediateResponder(InteractionBase interactionBase, boolean ephermal) {
         InteractionImmediateResponseBuilder responseBuilder = interactionBase.createImmediateResponder();
 
         responseBuilder.addEmbed(this);
-        responseBuilder.addComponents(highLevelComponents);
+
+        if (this.highLevelComponents != null) {
+            responseBuilder.addComponents(this.highLevelComponents);
+        }
 
         if (ephermal) {
             responseBuilder.setFlags(MessageFlag.EPHEMERAL);

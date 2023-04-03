@@ -28,7 +28,7 @@ public class StopCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Aktualnie nie gram.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
@@ -39,7 +39,7 @@ public class StopCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Utwór jest już zatrzymany.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
@@ -47,7 +47,7 @@ public class StopCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Aktualnie nie gram.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 

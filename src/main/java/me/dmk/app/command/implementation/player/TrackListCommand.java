@@ -18,6 +18,11 @@ import org.javacord.api.interaction.SlashCommandInteraction;
  */
 
 public class TrackListCommand extends PlayerCommand {
+
+    private final ActionRow buttons = ActionRow.of(
+            Button.secondary(ButtonInteractionType.TRACK_LIST_CLEAR.getMessageId(), "Wyczyść kolejkę", EmojiUtil.getTrash())
+    );
+
     public TrackListCommand() {
         super("track-list", "Wyświetla listę zakolejkowanych utworów");
 
@@ -32,12 +37,14 @@ public class TrackListCommand extends PlayerCommand {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Lista odtwarzania utworów jest pusta.");
 
-            embedMessage.createImmediateResponder(interaction);
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
         EmbedMessage embedMessage =  new EmbedMessage(server).success();
+
         embedMessage.setDescription("**Kolejka odtwarzania utworów:**");
+        embedMessage.setHighLevelComponents(this.buttons);
 
         int i = 1;
         for (AudioTrack track : trackScheduler.getQueue()) {
@@ -45,10 +52,6 @@ public class TrackListCommand extends PlayerCommand {
             i++;
         }
 
-        ActionRow buttons = ActionRow.of(
-                Button.secondary(ButtonInteractionType.TRACK_LIST_CLEAR.getMessageId(), "Wyczyść kolejkę", EmojiUtil.getTrash())
-        );
-
-        embedMessage.createImmediateResponder(interaction, buttons);
+        embedMessage.createImmediateResponder(interaction);
     }
 }

@@ -64,26 +64,26 @@ public class PlayCommand extends Command {
         String search = interaction.getArgumentStringValueByName("search").orElseThrow();
         String query = StringUtil.isUrl(search) ? search : "ytsearch: " + search;
 
-        InteractionOriginalResponseUpdater responseUpdater = interaction.respondLater().join();
-
         Optional<ServerVoiceChannel> voiceChannelOptional = user.getConnectedVoiceChannel(server);
         if (voiceChannelOptional.isEmpty()) {
-            EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                    .setDescription("Nie jesteś połączony na kanale głosowym.");
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-            responseUpdater.addEmbed(embedBuilder).update();
+            embedMessage.setDescription("Nie jesteś połączony na kanale głosowym.");
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
 
         ServerVoiceChannel voiceChannel = voiceChannelOptional.get();
 
         if (!voiceChannel.canYouConnect() || !voiceChannel.canYouSpeak()) {
-            EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                    .setDescription("Nie posiadam uprawnień do dołączenia lub mówienia na twoim kanałe głosowym.");
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-            responseUpdater.addEmbed(embedBuilder).update();
+            embedMessage.setDescription("Nie posiadam uprawnień do dołączenia lub mówienia na twoim kanałe głosowym.");
+            embedMessage.createImmediateResponder(interaction, true);
             return;
         }
+
+        InteractionOriginalResponseUpdater responseUpdater = interaction.respondLater().join();
 
         DiscordApi discordApi = interaction.getApi();
         User yourself = discordApi.getYourself();
@@ -187,7 +187,9 @@ public class PlayCommand extends Command {
                 EmbedBuilder embedBuilder = new EmbedMessage(server).error()
                         .setDescription("Nie znalazłem żadnego pasującego utworu.");
 
-                responseUpdater.addEmbed(embedBuilder).update();
+                responseUpdater
+                        .addEmbed(embedBuilder)
+                        .update();
             }
 
             @Override
@@ -196,7 +198,9 @@ public class PlayCommand extends Command {
                         .setDescription("Wystąpił błąd podczas ładowania utworu.")
                         .addField("Szczegóły błędu", exception.getMessage());
 
-                responseUpdater.addEmbed(embedBuilder).update();
+                responseUpdater
+                        .addEmbed(embedBuilder)
+                        .update();
             }
         };
 

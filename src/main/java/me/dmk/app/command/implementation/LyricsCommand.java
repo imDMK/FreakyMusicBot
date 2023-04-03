@@ -50,7 +50,7 @@ public class LyricsCommand extends Command {
                     EmbedMessage embedMessage = new EmbedMessage(server).error();
                     embedMessage.setDescription("Nie udało się znaleźć tekstu.");
 
-                    embedMessage.createImmediateResponder(interaction);
+                    embedMessage.createImmediateResponder(interaction, true);
                     return null;
                 });
     }
