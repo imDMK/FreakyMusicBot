@@ -47,28 +47,16 @@ public class SkipCommand extends PlayerCommand {
         //Skip track
         serverAudioPlayer.getTrackScheduler().nextTrack();
 
+        //Get next track
         AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
-        String[] embedDescription;
-        if (nextTrack == null) {
-            embedDescription = new String[]{
-                    "Pomięto utwór:",
-                    "**" + playingTrack.getInfo().title + "**",
-                    "",
-                    "Następny utwór:",
-                    "**Brak**"
-            };
-        } else {
-            embedDescription = new String[]{
-                    "Pomięto utwór:",
-                    "**" + playingTrack.getInfo().title + "**",
-                    "",
-                    "Następny utwór:",
-                    "**" + nextTrack.getInfo().title + "**",
-                    "",
-                    "Długość: **" + StringUtil.millisToString(nextTrack.getDuration()) + "**"
-            };
-        }
+        String[] embedDescription = new String[]{
+                "Pomięto utwór:",
+                "**" + playingTrack.getInfo().title + "**",
+                "",
+                "Następny utwór:",
+                "**" + (nextTrack == null ? "Brak" : nextTrack.getInfo().title + " (" + StringUtil.millisToString(nextTrack.getDuration()) + ")") + "**"
+        };
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
