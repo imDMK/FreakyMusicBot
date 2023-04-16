@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.json.gson.JsonGsonConfigurer;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.service.CommandService;
 import me.dmk.app.configuration.ClientConfiguration;
@@ -16,6 +15,8 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.ExceptionLogger;
 import org.javacord.api.util.logging.FallbackLoggerConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.stream.Stream;
@@ -24,12 +25,12 @@ import java.util.stream.Stream;
  * Created by DMK on 19.03.2023
  */
 
-@Slf4j
 @Getter
 public class MusicApp {
 
-    private final Instant startInstant;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final Instant startInstant;
     private final ClientConfiguration clientConfiguration;
 
     private final AudioPlayerManager audioPlayerManager;
@@ -40,6 +41,7 @@ public class MusicApp {
     protected MusicApp() {
         this.startInstant = Instant.now();
 
+        /* Configuration */
         this.clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
             config.withConfigurer(new JsonGsonConfigurer());
             config.withBindFile("configuration.json");
@@ -48,16 +50,21 @@ public class MusicApp {
             config.load(true);
         });
 
+        /* Managers */
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(true)); //True to allow search
 
+        /* Maps */
         this.serverAudioPlayerMap = new ServerAudioPlayerMap(this.audioPlayerManager);
 
+        /* Services */
         this.commandService = new CommandService(this, this.audioPlayerManager, this.serverAudioPlayerMap);
         this.commandService.registerCommands();
 
+        /* Logger */
         FallbackLoggerConfiguration.setDebug(this.clientConfiguration.isDebug());
 
+        /* DiscordApi */
         new DiscordApiBuilder()
                 .setToken(this.clientConfiguration.getToken())
                 .setAllIntents()
@@ -73,8 +80,9 @@ public class MusicApp {
     private void onShardLogin(DiscordApi discordApi) {
         int currentShard = discordApi.getCurrentShard();
 
-        log.info("Connected to shard " + currentShard);
+        this.logger.info("Connected to shard " + currentShard);
 
+        /* Bulk commands */
         this.commandService.bulkOverwriteGlobalApplicationCommands(discordApi);
 
         /* Listeners */
@@ -90,6 +98,6 @@ public class MusicApp {
                 this.clientConfiguration.getActivityName()
         );
 
-        log.info("Shard " + currentShard + " ready.");
+        this.logger.info("Shard " + currentShard + " ready.");
     }
 }
