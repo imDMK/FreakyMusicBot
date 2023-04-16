@@ -54,6 +54,7 @@ public class MusicApp {
         this.serverAudioPlayerMap = new ServerAudioPlayerMap(this.audioPlayerManager);
 
         this.commandService = new CommandService(this, this.audioPlayerManager, this.serverAudioPlayerMap);
+        this.commandService.registerCommands();
 
         FallbackLoggerConfiguration.setDebug(this.clientConfiguration.isDebug());
 
@@ -74,8 +75,9 @@ public class MusicApp {
 
         log.info("Connected to shard " + currentShard);
 
-        this.commandService.registerCommands(discordApi);
+        this.commandService.bulkOverwriteGlobalApplicationCommands(discordApi);
 
+        /* Listeners */
         Stream.of(
                 new ButtonInteractionListener(this.serverAudioPlayerMap),
                 new SlashCommandListener(this.commandService, this.serverAudioPlayerMap)

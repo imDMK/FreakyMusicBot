@@ -13,6 +13,7 @@ import me.dmk.app.command.implementation.player.*;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.interaction.SlashCommandBuilder;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class CommandService {
 
     private final Map<String, SlashCommandBuilder> commandBuilderMap = new ConcurrentHashMap<>();
 
-    public void registerCommands(DiscordApi discordApi) {
+    public void registerCommands() {
         PlayerCommand currentlyPlayingCommand = new NowPlayingCommand();
         PlayerCommand leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
         PlayerCommand repeatCommand = new RepeatCommand();
@@ -45,7 +46,7 @@ public class CommandService {
         Command playCommand = new PlayCommand(this.audioPlayerManager, this.serverAudioPlayerMap);
         Command statusCommand = new StatusCommand(this.musicApp);
 
-        this.register(discordApi,
+        this.put(
                 currentlyPlayingCommand,
                 leaveCommand,
                 repeatCommand,
@@ -61,7 +62,7 @@ public class CommandService {
         );
     }
 
-    private void register(DiscordApi discordApi, SlashCommandBuilder... slashCommandBuilders) {
+    private void put(SlashCommandBuilder... slashCommandBuilders) {
         for (SlashCommandBuilder commandBuilder : slashCommandBuilders) {
             if (commandBuilder instanceof PlayerCommand playerCommand) {
                 this.commandBuilderMap.put(playerCommand.getName(), playerCommand);
@@ -71,9 +72,15 @@ public class CommandService {
                 this.commandBuilderMap.put(command.getName(), command);
             }
         }
+    }
+
+    public void bulkOverwriteGlobalApplicationCommands(DiscordApi discordApi) {
+        Set<SlashCommandBuilder> slashCommandBuilders = new HashSet<>(
+                this.commandBuilderMap.values()
+        );
 
         discordApi.bulkOverwriteGlobalApplicationCommands(
-                Set.of(slashCommandBuilders)
+                slashCommandBuilders
         );
     }
 
