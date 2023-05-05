@@ -15,6 +15,4 @@ public class ClientConfiguration extends OkaeriConfig {
 
     public ActivityType activityType = ActivityType.LISTENING;
     public String activityName = "I'm just playing music.";
-
-    public boolean debug = false;
 }

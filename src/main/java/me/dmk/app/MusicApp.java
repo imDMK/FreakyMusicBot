@@ -14,7 +14,6 @@ import me.dmk.app.listener.button.ButtonInteractionListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.util.logging.ExceptionLogger;
-import org.javacord.api.util.logging.FallbackLoggerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,9 +60,6 @@ public class MusicApp {
         this.commandService = new CommandService(this, this.audioPlayerManager, this.serverAudioPlayerMap);
         this.commandService.registerCommands();
 
-        /* Logger */
-        FallbackLoggerConfiguration.setDebug(this.clientConfiguration.isDebug());
-
         /* DiscordApi */
         new DiscordApiBuilder()
                 .setToken(this.clientConfiguration.getToken())
@@ -77,7 +73,7 @@ public class MusicApp {
                 );
     }
 
-    private void onShardLogin(DiscordApi discordApi) {
+    protected void onShardLogin(DiscordApi discordApi) {
         int currentShard = discordApi.getCurrentShard();
 
         this.logger.info("Connected to shard " + currentShard);
