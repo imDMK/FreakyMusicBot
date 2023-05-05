@@ -15,6 +15,9 @@ import org.javacord.api.interaction.SlashCommandOptionType;
  */
 
 public class LyricsCommand extends Command {
+
+    private final LyricsClient lyricsClient = new LyricsClient();
+
     public LyricsCommand() {
         super("lyrics", "Wyświetl tekst utworu.");
 
@@ -32,9 +35,7 @@ public class LyricsCommand extends Command {
     public void execute(SlashCommandInteraction interaction, Server server, User user) {
         String search = interaction.getArgumentStringValueByName("search").orElseThrow();
 
-        LyricsClient lyricsClient = new LyricsClient();
-
-        lyricsClient.getLyrics(search)
+        this.lyricsClient.getLyrics(search)
                 .thenAcceptAsync(lyrics -> {
                     EmbedMessage embedMessage = new EmbedMessage(server).success();
 
