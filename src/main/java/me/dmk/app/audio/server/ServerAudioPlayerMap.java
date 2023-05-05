@@ -3,9 +3,9 @@ package me.dmk.app.audio.server;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by DMK on 21.03.2023
@@ -16,7 +16,7 @@ public class ServerAudioPlayerMap {
 
     private final AudioPlayerManager audioPlayerManager;
 
-    private final Map<Long, ServerAudioPlayer> serverAudioPlayerMap = new HashMap<>();
+    private final Map<Long, ServerAudioPlayer> serverAudioPlayerMap = new ConcurrentHashMap<>();
 
     public ServerAudioPlayer create(long serverId) {
         ServerAudioPlayer serverAudioPlayer = new ServerAudioPlayer(this.audioPlayerManager);

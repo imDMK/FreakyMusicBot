@@ -7,6 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -32,6 +33,10 @@ public class TrackScheduler extends AudioEventAdapter {
         if (!this.player.startTrack(track, true)) {
             this.queue.add(track);
         }
+    }
+
+    public void queue(List<AudioTrack> trackList) {
+        trackList.forEach(this::queue);
     }
 
     public void nextTrack() {

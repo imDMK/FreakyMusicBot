@@ -1,31 +1,24 @@
 package me.dmk.app.command.implementation;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.LavaplayerAudioSource;
-import me.dmk.app.audio.TrackScheduler;
+import me.dmk.app.audio.handler.AudioResultHandler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.embed.EmbedMessage;
-import me.dmk.app.listener.button.ButtonInteractionType;
-import me.dmk.app.util.EmojiUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.audio.AudioSource;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
-import org.javacord.api.entity.message.component.ActionRow;
-import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.interaction.callback.InteractionOriginalResponseUpdater;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import java.util.Optional;
 
@@ -37,12 +30,6 @@ public class PlayCommand extends Command {
 
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
-
-    private final ActionRow buttons = ActionRow.of(
-            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-            Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
-            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-    );
 
     public PlayCommand(AudioPlayerManager audioPlayerManager, ServerAudioPlayerMap serverAudioPlayerMap) {
         super("play", "Puść ulubiony utwór");
@@ -63,6 +50,9 @@ public class PlayCommand extends Command {
     public void execute(SlashCommandInteraction interaction, Server server, User user) {
         String search = interaction.getArgumentStringValueByName("search").orElseThrow();
         String query = StringUtil.isUrl(search) ? search : "ytsearch: " + search;
+
+        DiscordApi discordApi = interaction.getApi();
+        User yourself = discordApi.getYourself();
 
         Optional<ServerVoiceChannel> voiceChannelOptional = user.getConnectedVoiceChannel(server);
         if (voiceChannelOptional.isEmpty()) {
@@ -85,9 +75,6 @@ public class PlayCommand extends Command {
 
         InteractionOriginalResponseUpdater responseUpdater = interaction.respondLater().join();
 
-        DiscordApi discordApi = interaction.getApi();
-        User yourself = discordApi.getYourself();
-
         ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.getOrElseCreate(server.getId());
 
         if (voiceChannel.isConnected(yourself) && server.getAudioConnection().isPresent()) {
@@ -97,117 +84,50 @@ public class PlayCommand extends Command {
                 EmbedBuilder embedBuilder = new EmbedMessage(server).error()
                         .setDescription("Nie jesteś na tym samym kanale głosowym.");
 
-                responseUpdater.addEmbed(embedBuilder).update();
+                responseUpdater.addEmbed(embedBuilder)
+                        .update()
+                        .exceptionally(ExceptionLogger.get());
                 return;
             }
 
             AudioSource audioSource = new LavaplayerAudioSource(discordApi, serverAudioPlayer.getAudioPlayer());
             audioConnection.setAudioSource(audioSource);
 
-            this.queue(responseUpdater, server, query, serverAudioPlayer);
+            this.queue(serverAudioPlayer, query, server, responseUpdater);
         } else {
             voiceChannel.connect()
                     .thenAcceptAsync(audioConnection -> {
                         AudioSource audioSource = new LavaplayerAudioSource(discordApi, serverAudioPlayer.getAudioPlayer());
                         audioConnection.setAudioSource(audioSource);
 
-                        this.queue(responseUpdater, server, query, serverAudioPlayer);
+                        this.queue(serverAudioPlayer, query, server, responseUpdater);
                     })
                     .exceptionallyAsync(throwable -> {
                         EmbedBuilder embedBuilder = new EmbedMessage(server).error()
                                 .setDescription("Wystąpił błąd podczas dołączania do twojego kanału głosowego.")
                                 .addField("Szczegóły błędu", throwable.getMessage());
 
-                        responseUpdater.addEmbed(embedBuilder).update();
+                        responseUpdater.addEmbed(embedBuilder)
+                                .update()
+                                .exceptionally(ExceptionLogger.get());
+
+                        throwable.printStackTrace();
                         return null;
                     });
         }
     }
 
-    private void queue(InteractionOriginalResponseUpdater responseUpdater, Server server, String query, ServerAudioPlayer serverAudioPlayer) {
-        TrackScheduler trackScheduler = serverAudioPlayer.getTrackScheduler();
-
-        AudioLoadResultHandler loadResultHandler = new AudioLoadResultHandler() {
-            @Override
-            public void trackLoaded(AudioTrack track) {
-                trackScheduler.queue(track);
-
-                EmbedMessage embedMessage = new EmbedMessage(server).success();
-
-                embedMessage.setDescription(
-                        "Zakolejkowano utwór:",
-                        "**" + track.getInfo().title + "**",
-                        "",
-                        "**Długość:** " + StringUtil.millisToString(track.getDuration())
-                );
-                embedMessage.setYouTubeVideoImage(track);
-
+    private void queue(ServerAudioPlayer serverAudioPlayer, String query, Server server, InteractionOriginalResponseUpdater responseUpdater) {
+        AudioResultHandler audioResultHandler = new AudioResultHandler(
+                server,
+                serverAudioPlayer.getTrackScheduler(),
                 responseUpdater
-                        .addEmbed(embedMessage)
-                        .addComponents(buttons)
-                        .update();
-            }
-
-            @Override
-            public void playlistLoaded(AudioPlaylist playlist) {
-                AudioTrack firstTrack = playlist.getTracks().get(0);
-
-                String[] embedDescription;
-                if (playlist.isSearchResult()) {
-                    trackScheduler.queue(firstTrack);
-
-                    embedDescription = new String[]{
-                            "Zakolejkowano utwór:",
-                            "**" + firstTrack.getInfo().title + "**",
-                            "",
-                            "Długość: **" + StringUtil.millisToString(firstTrack.getDuration()) + "**"
-                    };
-                } else {
-                    playlist.getTracks().forEach(trackScheduler::queue);
-
-                    embedDescription = new String[]{
-                            "Zakolejkowano wszystkie utwory z playlisty:",
-                            "**" + playlist.getName() + "**"
-                    };
-                }
-
-                EmbedMessage embedMessage = new EmbedMessage(server).success();
-
-                embedMessage.setDescription(embedDescription);
-                embedMessage.setYouTubeVideoImage(firstTrack);
-
-                responseUpdater
-                        .addEmbed(embedMessage)
-                        .addComponents(buttons)
-                        .update();
-            }
-
-            @Override
-            public void noMatches() {
-                EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                        .setDescription("Nie znalazłem żadnego pasującego utworu.");
-
-                responseUpdater
-                        .addEmbed(embedBuilder)
-                        .update();
-            }
-
-            @Override
-            public void loadFailed(FriendlyException exception) {
-                EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                        .setDescription("Wystąpił błąd podczas ładowania utworu.")
-                        .addField("Szczegóły błędu", exception.getMessage());
-
-                responseUpdater
-                        .addEmbed(embedBuilder)
-                        .update();
-            }
-        };
+        );
 
         this.audioPlayerManager.loadItemOrdered(
                 serverAudioPlayer,
                 query,
-                loadResultHandler
+                audioResultHandler
         );
     }
 }
