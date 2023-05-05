@@ -77,7 +77,7 @@ public class EmbedMessage extends EmbedBuilder {
         this.createImmediateResponder(interactionBase, false);
     }
 
-    public void createImmediateResponder(InteractionBase interactionBase, boolean ephermal) {
+    public void createImmediateResponder(InteractionBase interactionBase, boolean ephemeral) {
         InteractionImmediateResponseBuilder responseBuilder = interactionBase.createImmediateResponder();
 
         responseBuilder.addEmbed(this);
@@ -86,7 +86,7 @@ public class EmbedMessage extends EmbedBuilder {
             responseBuilder.addComponents(this.highLevelComponents);
         }
 
-        if (ephermal) {
+        if (ephemeral) {
             responseBuilder.setFlags(MessageFlag.EPHEMERAL);
         }
 
