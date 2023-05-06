@@ -16,7 +16,6 @@ import org.javacord.api.interaction.SlashCommandBuilder;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -75,16 +74,16 @@ public class CommandService {
     }
 
     public void bulkOverwriteGlobalApplicationCommands(DiscordApi discordApi) {
-        Set<SlashCommandBuilder> slashCommandBuilders = new HashSet<>(
-                this.commandBuilderMap.values()
-        );
-
         discordApi.bulkOverwriteGlobalApplicationCommands(
-                slashCommandBuilders
+                new HashSet<>(
+                        this.commandBuilderMap.values()
+                )
         );
     }
 
     public Optional<SlashCommandBuilder> get(String commandName) {
-        return Optional.ofNullable(this.commandBuilderMap.get(commandName));
+        return Optional.ofNullable(
+                this.commandBuilderMap.get(commandName)
+        );
     }
 }
