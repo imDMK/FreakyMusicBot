@@ -5,11 +5,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
-import me.dmk.app.listener.button.ButtonInteractionType;
-import me.dmk.app.util.EmojiUtil;
+import me.dmk.app.util.ActionRowUtil;
 import me.dmk.app.util.StringUtil;
-import org.javacord.api.entity.message.component.ActionRow;
-import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -17,14 +14,7 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 /**
  * Created by DMK on 21.03.2023
  */
-
 public class NowPlayingCommand extends PlayerCommand {
-
-    private final ActionRow buttons = ActionRow.of(
-            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-            Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
-            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-    );
 
     public NowPlayingCommand() {
         super("now-playing", "Wyświetla aktualnie grany utwór");
@@ -65,7 +55,7 @@ public class NowPlayingCommand extends PlayerCommand {
         );
 
         embedMessage.setYouTubeVideoImage(playingTrack);
-        embedMessage.setHighLevelComponents(this.buttons);
+        embedMessage.setHighLevelComponents(ActionRowUtil.getControlButtons());
 
         embedMessage.createImmediateResponder(interaction);
     }

@@ -7,11 +7,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.AllArgsConstructor;
 import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.embed.EmbedMessage;
-import me.dmk.app.listener.button.ButtonInteractionType;
-import me.dmk.app.util.EmojiUtil;
+import me.dmk.app.util.ActionRowUtil;
 import me.dmk.app.util.StringUtil;
-import org.javacord.api.entity.message.component.ActionRow;
-import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.callback.InteractionOriginalResponseUpdater;
@@ -29,12 +26,6 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     private final TrackScheduler trackScheduler;
     private final InteractionOriginalResponseUpdater responseUpdater;
 
-    private final ActionRow components = ActionRow.of(
-            Button.secondary(ButtonInteractionType.TRACK_PLAY_OR_STOP.getMessageId(), "Wznów/Zatrzymaj utwór", EmojiUtil.getPlayOrPause()),
-            Button.secondary(ButtonInteractionType.TRACK_SKIP.getMessageId(), "Pomiń utwór", EmojiUtil.getNextTrack()),
-            Button.secondary(ButtonInteractionType.TRACK_REPEAT.getMessageId(), "Włącz/Wyłącz powtarzanie utworu", EmojiUtil.getRepeat())
-    );
-
     @Override
     public void trackLoaded(AudioTrack track) {
         this.trackScheduler.queue(track);
@@ -51,7 +42,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
 
         this.responseUpdater
                 .addEmbed(embedMessage)
-                .addComponents(this.components)
+                .addComponents(ActionRowUtil.getControlButtons())
                 .update()
                 .exceptionally(ExceptionLogger.get());
     }
@@ -88,7 +79,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
 
         this.responseUpdater
                 .addEmbed(embedMessage)
-                .addComponents(this.components)
+                .addComponents(ActionRowUtil.getControlButtons())
                 .update()
                 .exceptionally(ExceptionLogger.get());
     }
