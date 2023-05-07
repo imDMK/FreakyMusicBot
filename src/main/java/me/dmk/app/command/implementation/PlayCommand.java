@@ -1,7 +1,7 @@
 package me.dmk.app.command.implementation;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import me.dmk.app.audio.LavaplayerAudioSource;
+import me.dmk.app.audio.ServerAudioSource;
 import me.dmk.app.audio.handler.AudioResultHandler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
@@ -12,12 +12,10 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.audio.AudioConnection;
 import org.javacord.api.audio.AudioSource;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandOption;
-import org.javacord.api.interaction.callback.InteractionOriginalResponseUpdater;
 import org.javacord.api.util.logging.ExceptionLogger;
 
 import java.util.Optional;
@@ -54,8 +52,8 @@ public class PlayCommand extends Command {
         DiscordApi discordApi = interaction.getApi();
         User yourself = discordApi.getYourself();
 
-        Optional<ServerVoiceChannel> voiceChannelOptional = user.getConnectedVoiceChannel(server);
-        if (voiceChannelOptional.isEmpty()) {
+        Optional<ServerVoiceChannel> userVoiceChannelOptional = user.getConnectedVoiceChannel(server);
+        if (userVoiceChannelOptional.isEmpty()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
 
             embedMessage.setDescription("Nie jesteś połączony na kanale głosowym.");
@@ -63,9 +61,9 @@ public class PlayCommand extends Command {
             return;
         }
 
-        ServerVoiceChannel voiceChannel = voiceChannelOptional.get();
+        ServerVoiceChannel userVoiceChannel = userVoiceChannelOptional.get();
 
-        if (!voiceChannel.canYouConnect() || !voiceChannel.canYouSpeak()) {
+        if (!userVoiceChannel.canYouConnect() || !userVoiceChannel.canYouSpeak()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
 
             embedMessage.setDescription("Nie posiadam uprawnień do dołączenia lub mówienia na twoim kanałe głosowym.");
@@ -73,43 +71,37 @@ public class PlayCommand extends Command {
             return;
         }
 
-        InteractionOriginalResponseUpdater responseUpdater = interaction.respondLater().join();
+        ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.getOrElseCreate(server.getId(), user.getId());
 
-        ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.getOrElseCreate(server.getId());
+        if (!userVoiceChannel.isConnected(yourself) && !serverAudioPlayer.isRequester(user)) {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-        if (voiceChannel.isConnected(yourself) && server.getAudioConnection().isPresent()) {
-            AudioConnection audioConnection = server.getAudioConnection().get();
+            embedMessage.setDescription("Inny użytkownik aktualnie słucha na tym serwerze.");
+            embedMessage.createImmediateResponder(interaction, true);
+            return;
+        }
 
-            if (audioConnection.getChannel().getId() != voiceChannel.getId()) {
-                EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                        .setDescription("Nie jesteś na tym samym kanale głosowym.");
+        AudioSource audioSource = new ServerAudioSource(discordApi, serverAudioPlayer.getAudioPlayer());
 
-                responseUpdater.addEmbed(embedBuilder)
-                        .update()
-                        .exceptionally(ExceptionLogger.get());
-                return;
-            }
+        Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
+        if (audioConnectionOptional.isPresent() && userVoiceChannel.isConnected(yourself)) {
+            audioConnectionOptional.get().setAudioSource(audioSource);
 
-            AudioSource audioSource = new LavaplayerAudioSource(discordApi, serverAudioPlayer.getAudioPlayer());
-            audioConnection.setAudioSource(audioSource);
-
-            this.queue(serverAudioPlayer, query, server, responseUpdater);
+            this.respond(serverAudioPlayer, query, server, interaction);
         } else {
-            voiceChannel.connect()
+            userVoiceChannel.connect()
                     .thenAcceptAsync(audioConnection -> {
-                        AudioSource audioSource = new LavaplayerAudioSource(discordApi, serverAudioPlayer.getAudioPlayer());
                         audioConnection.setAudioSource(audioSource);
 
-                        this.queue(serverAudioPlayer, query, server, responseUpdater);
+                        this.respond(serverAudioPlayer, query, server, interaction);
                     })
                     .exceptionallyAsync(throwable -> {
-                        EmbedBuilder embedBuilder = new EmbedMessage(server).error()
-                                .setDescription("Wystąpił błąd podczas dołączania do twojego kanału głosowego.")
-                                .addField("Szczegóły błędu", throwable.getMessage());
+                        EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-                        responseUpdater.addEmbed(embedBuilder)
-                                .update()
-                                .exceptionally(ExceptionLogger.get());
+                        embedMessage.setDescription("Wystąpił błąd podczas dołączania do twojego kanału głosowego.");
+                        embedMessage.addField("Szczegóły błędu", throwable.getMessage());
+
+                        embedMessage.createImmediateResponder(interaction, true);
 
                         throwable.printStackTrace();
                         return null;
@@ -117,17 +109,13 @@ public class PlayCommand extends Command {
         }
     }
 
-    private void queue(ServerAudioPlayer serverAudioPlayer, String query, Server server, InteractionOriginalResponseUpdater responseUpdater) {
-        AudioResultHandler audioResultHandler = new AudioResultHandler(
-                server,
-                serverAudioPlayer.getTrackScheduler(),
-                responseUpdater
-        );
-
-        this.audioPlayerManager.loadItemOrdered(
-                serverAudioPlayer,
-                query,
-                audioResultHandler
-        );
+    private void respond(ServerAudioPlayer serverAudioPlayer, String query, Server server, SlashCommandInteraction interaction) {
+        interaction.respondLater()
+                .thenAcceptAsync(responseUpdater -> this.audioPlayerManager.loadItemOrdered(
+                        serverAudioPlayer,
+                        query,
+                        new AudioResultHandler(server, serverAudioPlayer.getTrackScheduler(), responseUpdater)
+                ))
+                .exceptionally(ExceptionLogger.get());
     }
 }

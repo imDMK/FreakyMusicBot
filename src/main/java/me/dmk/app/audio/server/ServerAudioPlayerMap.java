@@ -18,8 +18,8 @@ public class ServerAudioPlayerMap {
 
     private final Map<Long, ServerAudioPlayer> serverAudioPlayerMap = new ConcurrentHashMap<>();
 
-    public ServerAudioPlayer create(long serverId) {
-        ServerAudioPlayer serverAudioPlayer = new ServerAudioPlayer(this.audioPlayerManager);
+    public ServerAudioPlayer create(long serverId, long requester) {
+        ServerAudioPlayer serverAudioPlayer = new ServerAudioPlayer(this.audioPlayerManager, requester);
 
         this.serverAudioPlayerMap.put(serverId, serverAudioPlayer);
         return serverAudioPlayer;
@@ -31,9 +31,9 @@ public class ServerAudioPlayerMap {
         );
     }
 
-    public ServerAudioPlayer getOrElseCreate(long serverId) {
+    public ServerAudioPlayer getOrElseCreate(long serverId, long requester) {
         return this.get(serverId).orElseGet(
-                () -> this.create(serverId)
+                () -> this.create(serverId, requester)
         );
     }
 

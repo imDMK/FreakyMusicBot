@@ -10,7 +10,7 @@ import org.javacord.api.audio.AudioSourceBase;
  * Created by DMK on 20.03.2023
  */
 
-public class LavaplayerAudioSource extends AudioSourceBase {
+public class ServerAudioSource extends AudioSourceBase {
 
     private final AudioPlayer audioPlayer;
     private AudioFrame lastFrame;
@@ -20,7 +20,7 @@ public class LavaplayerAudioSource extends AudioSourceBase {
      *
      * @param api The discord api instance.
      */
-    public LavaplayerAudioSource(DiscordApi api, AudioPlayer audioPlayer) {
+    public ServerAudioSource(DiscordApi api, AudioPlayer audioPlayer) {
         super(api);
 
         this.audioPlayer = audioPlayer;
@@ -48,6 +48,6 @@ public class LavaplayerAudioSource extends AudioSourceBase {
 
     @Override
     public AudioSource copy() {
-        return new LavaplayerAudioSource(getApi(), this.audioPlayer);
+        return new ServerAudioSource(getApi(), this.audioPlayer);
     }
 }

@@ -51,7 +51,7 @@ public class MusicApp {
 
         /* Managers */
         this.audioPlayerManager = new DefaultAudioPlayerManager();
-        this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(true)); //True to allow search
+        this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager());
 
         /* Maps */
         this.serverAudioPlayerMap = new ServerAudioPlayerMap(this.audioPlayerManager);
