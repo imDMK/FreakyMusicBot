@@ -1,12 +1,14 @@
 package me.dmk.app.listener;
 
 import lombok.AllArgsConstructor;
+import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.Command;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.command.service.CommandService;
 import me.dmk.app.embed.EmbedMessage;
-import org.javacord.api.audio.AudioConnection;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
@@ -29,6 +31,7 @@ public class SlashCommandListener implements SlashCommandCreateListener {
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent event) {
         SlashCommandInteraction interaction = event.getSlashCommandInteraction();
+        DiscordApi discordApi = event.getApi();
         User user = interaction.getUser();
 
         String commandName = interaction.getCommandName();
@@ -48,36 +51,39 @@ public class SlashCommandListener implements SlashCommandCreateListener {
         SlashCommandBuilder commandBuilder = commandBuilderOptional.get();
 
         if (commandBuilder instanceof PlayerCommand playerCommand) {
+            Optional<ServerAudioPlayer> serverAudioPlayerOptional = this.serverAudioPlayerMap.get(server.getId());
+            if (serverAudioPlayerOptional.isEmpty()) {
+                EmbedMessage embedMessage = new EmbedMessage(server).error();
+
+                embedMessage.setDescription("Aktualnie nie gram.");
+                embedMessage.createImmediateResponder(interaction, true);
+                return;
+            }
+
+            ServerAudioPlayer serverAudioPlayer = serverAudioPlayerOptional.get();
+
             if (playerCommand.isRequiredUserOnChannel()) {
-                Optional<AudioConnection> audioConnectionOptional = server.getAudioConnection();
-                if (audioConnectionOptional.isEmpty()) {
+                Optional<ServerVoiceChannel> userVoiceChannelOptional = server.getConnectedVoiceChannel(discordApi.getYourself());
+                if (userVoiceChannelOptional.isEmpty()) {
                     EmbedMessage embedMessage = new EmbedMessage(server).error();
 
                     embedMessage.setDescription("Aktualnie nie gram.");
-                    embedMessage.createImmediateResponder(interaction);
+                    embedMessage.createImmediateResponder(interaction, true);
                     return;
                 }
 
-                AudioConnection audioConnection = audioConnectionOptional.get();
+                ServerVoiceChannel userVoiceChannel = userVoiceChannelOptional.get();
 
-                if (!audioConnection.getChannel().isConnected(user)) {
+                if (!userVoiceChannel.isConnected(user) && !serverAudioPlayer.isRequester(user)) {
                     EmbedMessage embedMessage = new EmbedMessage(server).error();
 
                     embedMessage.setDescription("Nie jesteś ze mną na kanale.");
-                    embedMessage.createImmediateResponder(interaction);
+                    embedMessage.createImmediateResponder(interaction, true);
                     return;
                 }
             }
 
-            this.serverAudioPlayerMap.get(server.getId())
-                    .ifPresentOrElse(serverAudioPlayer ->
-                                    playerCommand.execute(interaction, server, user, serverAudioPlayer),
-                            () -> {
-                        EmbedMessage embedMessage = new EmbedMessage(server).error();
-                        embedMessage.setDescription("Aktualnie nie gram.");
-
-                        embedMessage.createImmediateResponder(interaction);
-                    });
+            playerCommand.execute(interaction, server, user, serverAudioPlayer);
         }
 
         if (commandBuilder instanceof Command command) {
