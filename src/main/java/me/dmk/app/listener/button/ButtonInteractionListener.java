@@ -47,26 +47,26 @@ public class ButtonInteractionListener implements ButtonClickListener {
             return;
         }
 
-        AudioConnection audioConnection = audioConnectionOptional.get();
-
-        if (!audioConnection.getChannel().isConnected(user)) {
-            return;
-        }
-
-        Arrays.stream(ButtonInteractionType.values())
-                .filter(interactionType -> interactionType.getMessageId().equals(customId))
-                .forEachOrdered(interactionType ->
-                        this.onButtonClick(interaction, interactionType, server, user, message)
-                );
-    }
-
-    public void onButtonClick(ButtonInteraction interaction, ButtonInteractionType interactionType, Server server, User user, Message message) {
         Optional<ServerAudioPlayer> serverAudioPlayerOptional = this.serverAudioPlayerMap.get(server.getId());
         if (serverAudioPlayerOptional.isEmpty()) {
             return;
         }
 
         ServerAudioPlayer serverAudioPlayer = serverAudioPlayerOptional.get();
+
+        AudioConnection audioConnection = audioConnectionOptional.get();
+        if (!audioConnection.getChannel().isConnected(user) && !serverAudioPlayer.isRequester(user)) {
+            return;
+        }
+
+        Arrays.stream(ButtonInteractionType.values())
+                .filter(interactionType -> interactionType.getMessageId().equals(customId))
+                .forEachOrdered(interactionType ->
+                        this.onButtonClick(interaction, interactionType, serverAudioPlayer, server, user, message)
+                );
+    }
+
+    public void onButtonClick(ButtonInteraction interaction, ButtonInteractionType interactionType, ServerAudioPlayer serverAudioPlayer, Server server, User user, Message message) {
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 
