@@ -71,7 +71,7 @@ public class PlayCommand extends Command {
             return;
         }
 
-        ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.getOrElseCreate(server.getId(), user.getId());
+        ServerAudioPlayer serverAudioPlayer = this.serverAudioPlayerMap.getOrElseCreate(server.getId(), user.getId(), discordApi);
 
         if (!userVoiceChannel.isConnected(yourself) && !serverAudioPlayer.isRequester(user)) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
@@ -114,7 +114,7 @@ public class PlayCommand extends Command {
                 .thenAcceptAsync(responseUpdater -> this.audioPlayerManager.loadItemOrdered(
                         serverAudioPlayer,
                         query,
-                        new AudioResultHandler(server, serverAudioPlayer.getTrackScheduler(), responseUpdater)
+                        new AudioResultHandler(server, serverAudioPlayer, responseUpdater)
                 ))
                 .exceptionally(ExceptionLogger.get());
     }

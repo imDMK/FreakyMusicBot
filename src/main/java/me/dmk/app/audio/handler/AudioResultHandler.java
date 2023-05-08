@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.AllArgsConstructor;
-import me.dmk.app.audio.TrackScheduler;
+import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.embed.EmbedMessage;
 import me.dmk.app.util.ActionRowUtil;
 import me.dmk.app.util.StringUtil;
@@ -23,12 +23,12 @@ import java.util.List;
 public class AudioResultHandler implements AudioLoadResultHandler {
 
     private final Server server;
-    private final TrackScheduler trackScheduler;
+    private final ServerAudioPlayer serverAudioPlayer;
     private final InteractionOriginalResponseUpdater responseUpdater;
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        this.trackScheduler.queue(track);
+        this.serverAudioPlayer.getTrackScheduler().queue(track);
 
         EmbedMessage embedMessage = new EmbedMessage(this.server).success();
 
@@ -44,6 +44,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                 .addEmbed(embedMessage)
                 .addComponents(ActionRowUtil.getControlButtons())
                 .update()
+                .thenAccept(this.serverAudioPlayer::setMessageUrl)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -55,7 +56,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         String[] embedDescription;
 
         if (playlist.isSearchResult()) {
-            this.trackScheduler.queue(firstTrack);
+            this.serverAudioPlayer.getTrackScheduler().queue(firstTrack);
 
             embedDescription = new String[] {
                     "Zakolejkowano utwór:",
@@ -64,7 +65,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                     "Długość: **" + StringUtil.millisToString(firstTrack.getDuration()) + "**"
             };
         } else {
-            this.trackScheduler.queue(trackList);
+            this.serverAudioPlayer.getTrackScheduler().queue(trackList);
 
             embedDescription = new String[] {
                     "Zakolejkowano wszystkie utwory z playlisty:",
@@ -81,6 +82,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                 .addEmbed(embedMessage)
                 .addComponents(ActionRowUtil.getControlButtons())
                 .update()
+                .thenAccept(this.serverAudioPlayer::setMessageUrl)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -92,6 +94,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         this.responseUpdater
                 .addEmbed(embedBuilder)
                 .update()
+                .thenAccept(this.serverAudioPlayer::setMessageUrl)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -105,6 +108,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         this.responseUpdater
                 .addEmbed(embedMessage)
                 .update()
+                .thenAccept(this.serverAudioPlayer::setMessageUrl)
                 .exceptionally(ExceptionLogger.get());
     }
 }
