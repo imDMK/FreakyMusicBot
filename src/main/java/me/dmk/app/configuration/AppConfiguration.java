@@ -9,7 +9,7 @@ import org.javacord.api.entity.activity.ActivityType;
  */
 
 @Getter
-public class ClientConfiguration extends OkaeriConfig {
+public class AppConfiguration extends OkaeriConfig {
 
     public String token = "MTA4NzEyNjI5MzQ0NDgzNzUxOA.GuWA8P.hK9G_C1WdAKiMXcTo4NDrlQTJQK1USNTI_aqxA";
 

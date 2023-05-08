@@ -8,7 +8,7 @@ import eu.okaeri.configs.json.gson.JsonGsonConfigurer;
 import lombok.Getter;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.service.CommandService;
-import me.dmk.app.configuration.ClientConfiguration;
+import me.dmk.app.configuration.AppConfiguration;
 import me.dmk.app.listener.SlashCommandListener;
 import me.dmk.app.listener.button.ButtonInteractionListener;
 import org.javacord.api.DiscordApi;
@@ -30,7 +30,7 @@ public class MusicApp {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Instant startInstant;
-    private final ClientConfiguration clientConfiguration;
+    private final AppConfiguration appConfiguration;
 
     private final AudioPlayerManager audioPlayerManager;
     private final ServerAudioPlayerMap serverAudioPlayerMap;
@@ -41,7 +41,7 @@ public class MusicApp {
         this.startInstant = Instant.now();
 
         /* Configuration */
-        this.clientConfiguration = ConfigManager.create(ClientConfiguration.class, (config) -> {
+        this.appConfiguration = ConfigManager.create(AppConfiguration.class, (config) -> {
             config.withConfigurer(new JsonGsonConfigurer());
             config.withBindFile("configuration.json");
             config.withRemoveOrphans(true);
@@ -62,7 +62,7 @@ public class MusicApp {
 
         /* DiscordApi */
         new DiscordApiBuilder()
-                .setToken(this.clientConfiguration.getToken())
+                .setToken(this.appConfiguration.getToken())
                 .setAllIntents()
                 .setRecommendedTotalShards()
                 .join()
@@ -90,8 +90,8 @@ public class MusicApp {
         discordApi.setMessageCacheSize(10, 60 * 60); //1 hour
 
         discordApi.updateActivity(
-                this.clientConfiguration.getActivityType(),
-                this.clientConfiguration.getActivityName()
+                this.appConfiguration.getActivityType(),
+                this.appConfiguration.getActivityName()
         );
 
         this.logger.info("Shard " + currentShard + " ready.");
