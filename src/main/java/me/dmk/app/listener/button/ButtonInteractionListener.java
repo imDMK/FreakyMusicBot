@@ -3,6 +3,7 @@ package me.dmk.app.listener.button;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.AllArgsConstructor;
+import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.embed.EmbedMessage;
@@ -52,62 +53,68 @@ public class ButtonInteractionListener implements ButtonClickListener {
             return;
         }
 
+        AudioConnection audioConnection = audioConnectionOptional.get();
         ServerAudioPlayer serverAudioPlayer = serverAudioPlayerOptional.get();
 
-        AudioConnection audioConnection = audioConnectionOptional.get();
         if (!audioConnection.getChannel().isConnected(user) && !serverAudioPlayer.isRequester(user)) {
             return;
         }
 
         Arrays.stream(ButtonInteractionType.values())
                 .filter(interactionType -> interactionType.getMessageId().equals(customId))
-                .forEachOrdered(interactionType ->
+                .findAny().ifPresent(interactionType ->
                         this.onButtonClick(interaction, interactionType, serverAudioPlayer, server, user, message)
                 );
     }
 
-    public void onButtonClick(ButtonInteraction interaction, ButtonInteractionType interactionType, ServerAudioPlayer serverAudioPlayer, Server server, User user, Message message) {
-        AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
-        AudioTrack playingTrack = audioPlayer.getPlayingTrack();
-
+    private void onButtonClick(ButtonInteraction interaction, ButtonInteractionType interactionType, ServerAudioPlayer serverAudioPlayer, Server server, User user, Message message) {
         switch (interactionType) {
             case TRACK_LIST_CLEAR -> {
                 serverAudioPlayer.getTrackScheduler().getQueue().clear();
 
+                //Respond
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                embedMessage.setAuthor(user);
                 embedMessage.setDescription("Wyczyszczono kolejkę.");
+                embedMessage.setAuthor(user);
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
             }
 
             case TRACK_PLAY_OR_STOP -> {
+                AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+
                 audioPlayer.setPaused(!audioPlayer.isPaused());
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                embedMessage.setAuthor(user);
                 embedMessage.setDescription(
                         "**" + (audioPlayer.isPaused() ? "Zatrzymano" : "Wznowiono") + "** odtwarzanie utworu:",
                         "**" + audioPlayer.getPlayingTrack().getInfo().title + "**"
                 );
+                embedMessage.setAuthor(user);
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
             }
 
             case TRACK_SKIP -> {
+                AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
+                TrackScheduler trackScheduler = serverAudioPlayer.getTrackScheduler();
+
+                AudioTrack playingTrack = audioPlayer.getPlayingTrack();
                 if (playingTrack == null) {
                     return;
                 }
 
                 //Skip track
-                serverAudioPlayer.getTrackScheduler().nextTrack();
+                trackScheduler.nextTrack();
 
+                //Get next track
                 AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
+                //Respond
                 String[] embedDescription;
                 if (nextTrack == null) {
                     embedDescription = new String[]{
@@ -131,25 +138,28 @@ public class ButtonInteractionListener implements ButtonClickListener {
 
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
-                embedMessage.setAuthor(user);
                 embedMessage.setDescription(embedDescription);
                 embedMessage.setYouTubeVideoImage(nextTrack);
+                embedMessage.setAuthor(user);
 
                 message.edit(embedMessage);
                 interaction.createImmediateResponder().respond();
             }
 
             case TRACK_REPEAT -> {
-                String playingTrackTitle = (playingTrack == null ? "Następnego utworu" : playingTrack.getInfo().title);
+                TrackScheduler trackScheduler = serverAudioPlayer.getTrackScheduler();
+                AudioTrack playingTrack = serverAudioPlayer.getAudioPlayer().getPlayingTrack();
 
-                boolean isRepeat = serverAudioPlayer.getTrackScheduler().switchRepeat();
+                //Switch
+                trackScheduler.switchRepeat();
 
+                //Respond
                 EmbedMessage embedMessage = new EmbedMessage(server).success();
 
                 embedMessage.setAuthor(user);
                 embedMessage.setDescription(
-                        "**" + (isRepeat ? "Włączono" : "Wyłączono") + "** powtarzanie utworu:",
-                        "**" + playingTrackTitle + "**"
+                        "**" + (trackScheduler.isRepeat() ? "Włączono" : "Wyłączono") + "** powtarzanie utworu:",
+                        "**" + (playingTrack == null ? "Następnego utworu" : playingTrack.getInfo().title) + "**"
                 );
 
                 message.edit(embedMessage);
