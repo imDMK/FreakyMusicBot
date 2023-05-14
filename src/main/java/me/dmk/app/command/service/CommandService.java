@@ -32,8 +32,9 @@ public class CommandService {
     private final Map<String, SlashCommandBuilder> commandBuilderMap = new ConcurrentHashMap<>();
 
     public void registerCommands() {
-        PlayerCommand currentlyPlayingCommand = new NowPlayingCommand();
         PlayerCommand leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
+        PlayerCommand nowPlayingCommand = new NowPlayingCommand();
+        PlayerCommand positionCommand = new PositionCommand();
         PlayerCommand repeatCommand = new RepeatCommand();
         PlayerCommand resumeCommand = new ResumeCommand();
         PlayerCommand skipCommand = new SkipCommand();
@@ -46,8 +47,9 @@ public class CommandService {
         Command statusCommand = new StatusCommand(this.musicApp);
 
         this.put(
-                currentlyPlayingCommand,
                 leaveCommand,
+                nowPlayingCommand,
+                positionCommand,
                 repeatCommand,
                 resumeCommand,
                 skipCommand,

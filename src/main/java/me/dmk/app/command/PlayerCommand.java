@@ -7,6 +7,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
+import org.javacord.api.interaction.SlashCommandOption;
 
 /**
  * Created by DMK on 22.03.2023
@@ -31,4 +32,11 @@ public abstract class PlayerCommand extends SlashCommandBuilder {
     }
 
     public abstract void execute(SlashCommandInteraction interaction, Server server, User user, ServerAudioPlayer serverAudioPlayer);
+
+
+    public void addOptions(SlashCommandOption... slashCommandOptions) {
+        for (SlashCommandOption slashCommandOption : slashCommandOptions) {
+            this.addOption(slashCommandOption);
+        }
+    }
 }
