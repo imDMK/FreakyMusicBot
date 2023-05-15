@@ -32,6 +32,7 @@ public class CommandService {
     private final Map<String, SlashCommandBuilder> commandBuilderMap = new ConcurrentHashMap<>();
 
     public void registerCommands() {
+        PlayerCommand bassBoostCommand = new BassBoostCommand();
         PlayerCommand leaveCommand = new LeaveCommand(this.serverAudioPlayerMap);
         PlayerCommand nowPlayingCommand = new NowPlayingCommand();
         PlayerCommand positionCommand = new PositionCommand();
@@ -47,6 +48,7 @@ public class CommandService {
         Command statusCommand = new StatusCommand(this.musicApp);
 
         this.put(
+                bassBoostCommand,
                 leaveCommand,
                 nowPlayingCommand,
                 positionCommand,

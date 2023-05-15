@@ -52,6 +52,7 @@ public class MusicApp {
         /* Managers */
         this.audioPlayerManager = new DefaultAudioPlayerManager();
         this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager());
+        this.audioPlayerManager.getConfiguration().setFilterHotSwapEnabled(true); //enable bass boost
 
         /* Maps */
         this.serverAudioPlayerMap = new ServerAudioPlayerMap(this.audioPlayerManager);
