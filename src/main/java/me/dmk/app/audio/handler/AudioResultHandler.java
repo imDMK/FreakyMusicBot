@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.AllArgsConstructor;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.embed.EmbedMessage;
-import me.dmk.app.util.ActionRowUtil;
+import me.dmk.app.util.ButtonUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
@@ -42,9 +42,9 @@ public class AudioResultHandler implements AudioLoadResultHandler {
 
         this.responseUpdater
                 .addEmbed(embedMessage)
-                .addComponents(ActionRowUtil.getControlButtons())
+                .addComponents(ButtonUtil.getControlButtons())
                 .update()
-                .thenAccept(this.serverAudioPlayer::setMessageUrl)
+                .thenAccept(this.serverAudioPlayer::setMusicMessage)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -80,9 +80,9 @@ public class AudioResultHandler implements AudioLoadResultHandler {
 
         this.responseUpdater
                 .addEmbed(embedMessage)
-                .addComponents(ActionRowUtil.getControlButtons())
+                .addComponents(ButtonUtil.getControlButtons())
                 .update()
-                .thenAccept(this.serverAudioPlayer::setMessageUrl)
+                .thenAccept(this.serverAudioPlayer::setMusicMessage)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -94,7 +94,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         this.responseUpdater
                 .addEmbed(embedBuilder)
                 .update()
-                .thenAccept(this.serverAudioPlayer::setMessageUrl)
+                .thenAccept(this.serverAudioPlayer::setMusicMessage)
                 .exceptionally(ExceptionLogger.get());
     }
 
@@ -108,7 +108,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         this.responseUpdater
                 .addEmbed(embedMessage)
                 .update()
-                .thenAccept(this.serverAudioPlayer::setMessageUrl)
+                .thenAccept(this.serverAudioPlayer::setMusicMessage)
                 .exceptionally(ExceptionLogger.get());
     }
 }

@@ -6,8 +6,6 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import lombok.Getter;
 import me.dmk.app.audio.TrackScheduler;
 import me.dmk.app.audio.adapter.AudioAdapter;
-import me.dmk.app.util.MessageUtil;
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.user.User;
 
@@ -22,21 +20,23 @@ public class ServerAudioPlayer extends AudioEventAdapter {
     private final TrackScheduler trackScheduler;
     private final long requester;
 
-    private String messageUrl;
+    private Message musicMessage;
 
-    public ServerAudioPlayer(AudioPlayerManager audioPlayerManager, long requester, DiscordApi discordApi) {
+    public ServerAudioPlayer(AudioPlayerManager audioPlayerManager, long requester) {
         this.audioPlayer = audioPlayerManager.createPlayer();
         this.trackScheduler = new TrackScheduler(this.audioPlayer);
         this.requester = requester;
 
-        this.audioPlayer.addListener(new AudioAdapter(discordApi, this));
+        this.audioPlayer.addListener(
+                new AudioAdapter(this)
+        );
     }
 
     public boolean isRequester(User user) {
         return user.getId() == this.requester;
     }
 
-    public void setMessageUrl(Message message) {
-        this.messageUrl = MessageUtil.getMessageUrl(message);
+    public void setMusicMessage(Message musicMessage) {
+        this.musicMessage = musicMessage;
     }
 }

@@ -8,7 +8,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lombok.AllArgsConstructor;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.embed.EmbedMessage;
-import org.javacord.api.DiscordApi;
+import me.dmk.app.util.ButtonUtil;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.component.ActionRow;
 
 /**
  * Created by DMK on 08.05.2023
@@ -16,7 +18,6 @@ import org.javacord.api.DiscordApi;
 @AllArgsConstructor
 public class AudioAdapter extends AudioEventAdapter {
 
-    private final DiscordApi discordApi;
     private final ServerAudioPlayer serverAudioPlayer;
 
     @Override
@@ -30,22 +31,43 @@ public class AudioAdapter extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        if (this.serverAudioPlayer.getMessageUrl() == null) {
+        Message musicMessage = this.serverAudioPlayer.getMusicMessage();
+
+        if (musicMessage == null) {
             return;
         }
 
-        this.discordApi.getMessageByLink(this.serverAudioPlayer.getMessageUrl())
-                .ifPresent(messageCompletableFuture -> messageCompletableFuture
-                        .thenAcceptAsync(message -> message.getServer().ifPresent(server -> {
-                            AudioTrack playingTrack = this.serverAudioPlayer.getAudioPlayer().getPlayingTrack();
+        musicMessage.getServer().ifPresent(server -> {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
 
-                            EmbedMessage embedMessage = new EmbedMessage(server).error();
+            embedMessage.setDescription("Wystąpił błąd podczas odtwarzania:", "**" + (track == null ? "Nieznanego utworu" : track.getInfo().title) + "**");
+            embedMessage.setYouTubeVideoImage(track);
 
-                            embedMessage.setDescription("Wystąpił błąd podczas odtwarzania:", "**" + (playingTrack == null ? "Nieznanego utworu" : playingTrack.getInfo().title) + "**");
-                            embedMessage.setYouTubeVideoImage(playingTrack);
+            musicMessage.createUpdater()
+                    .setEmbed(embedMessage)
+                    .addComponents(ActionRow.of(ButtonUtil.getTrackSkipButton()))
+                    .applyChanges();
+        });
+    }
 
-                            message.edit(embedMessage);
-                        }))
-                );
+    @Override
+    public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
+        Message musicMessage = this.serverAudioPlayer.getMusicMessage();
+
+        if (musicMessage == null) {
+            return;
+        }
+
+        musicMessage.getServer().ifPresent(server -> {
+            EmbedMessage embedMessage = new EmbedMessage(server).error();
+
+            embedMessage.setDescription("Wystąpił błąd podczas odtwarzania:", "**" + (track == null ? "Nieznanego utworu" : track.getInfo().title) + "**");
+            embedMessage.setYouTubeVideoImage(track);
+
+            musicMessage.createUpdater()
+                    .setEmbed(embedMessage)
+                    .addComponents(ActionRow.of(ButtonUtil.getTrackSkipButton()))
+                    .applyChanges();
+        });
     }
 }

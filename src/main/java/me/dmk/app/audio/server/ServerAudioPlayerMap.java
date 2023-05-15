@@ -2,7 +2,6 @@ package me.dmk.app.audio.server;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import lombok.RequiredArgsConstructor;
-import org.javacord.api.DiscordApi;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +18,8 @@ public class ServerAudioPlayerMap {
 
     private final Map<Long, ServerAudioPlayer> serverAudioPlayerMap = new ConcurrentHashMap<>();
 
-    public ServerAudioPlayer create(long serverId, long requester, DiscordApi discordApi) {
-        ServerAudioPlayer serverAudioPlayer = new ServerAudioPlayer(this.audioPlayerManager, requester, discordApi);
+    public ServerAudioPlayer create(long serverId, long requester) {
+        ServerAudioPlayer serverAudioPlayer = new ServerAudioPlayer(this.audioPlayerManager, requester);
 
         this.serverAudioPlayerMap.put(serverId, serverAudioPlayer);
         return serverAudioPlayer;
@@ -32,9 +31,9 @@ public class ServerAudioPlayerMap {
         );
     }
 
-    public ServerAudioPlayer getOrElseCreate(long serverId, long requester, DiscordApi discordApi) {
+    public ServerAudioPlayer getOrElseCreate(long serverId, long requester) {
         return this.get(serverId).orElseGet(
-                () -> this.create(serverId, requester, discordApi)
+                () -> this.create(serverId, requester)
         );
     }
 

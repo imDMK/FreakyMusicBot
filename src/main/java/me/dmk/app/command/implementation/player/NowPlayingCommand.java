@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
-import me.dmk.app.util.ActionRowUtil;
+import me.dmk.app.util.ButtonUtil;
 import me.dmk.app.util.StringUtil;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -55,7 +55,7 @@ public class NowPlayingCommand extends PlayerCommand {
         );
 
         embedMessage.setYouTubeVideoImage(playingTrack);
-        embedMessage.setHighLevelComponents(ActionRowUtil.getControlButtons());
+        embedMessage.setHighLevelComponents(ButtonUtil.getControlButtons());
 
         embedMessage.createImmediateResponder(interaction);
     }
