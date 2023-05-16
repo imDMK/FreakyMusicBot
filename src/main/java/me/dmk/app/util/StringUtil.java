@@ -39,16 +39,36 @@ public class StringUtil {
         );
     }
 
+    public static String millisToString(long millis) {
+        return durationToString(
+                Duration.ofMillis(millis)
+        );
+    }
+
     public static String durationToString(Duration duration) {
         if (duration.isNegative() || duration.isZero()) {
             return "<1s";
         }
 
+        long days = duration.toDaysPart();
         long hours = duration.toHoursPart();
         long minutes = duration.toMinutesPart();
         long seconds = duration.toSecondsPart();
 
         StringBuilder stringBuilder = new StringBuilder();
+
+        if (days > 0) {
+            if (days < 10) {
+                stringBuilder
+                        .append("0")
+                        .append(days)
+                        .append(":");
+            } else {
+                stringBuilder
+                        .append(days)
+                        .append(":");
+            }
+        }
 
         if (hours > 0) {
             if (hours < 10) {
@@ -84,12 +104,6 @@ public class StringUtil {
         }
 
         return stringBuilder.toString();
-    }
-
-    public static String millisToString(long millis) {
-        return durationToString(
-                Duration.ofMillis(millis)
-        );
     }
 
     public static String createProgressBar(int progress, int length) {
