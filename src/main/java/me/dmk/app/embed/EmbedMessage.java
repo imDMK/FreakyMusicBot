@@ -11,7 +11,6 @@ import org.javacord.api.interaction.InteractionBase;
 import org.javacord.api.interaction.callback.InteractionImmediateResponseBuilder;
 
 import java.awt.*;
-import java.util.Optional;
 
 /**
  * Created by DMK on 20.03.2023
@@ -38,18 +37,25 @@ public class EmbedMessage extends EmbedBuilder {
     }
 
     public EmbedMessage success() {
-        Optional<KnownCustomEmoji> successEmoji = this.server.getCustomEmojisByNameIgnoreCase("success").stream().findFirst();
+        String successEmoji = this.server.getCustomEmojisByNameIgnoreCase("success")
+                .stream()
+                .map(KnownCustomEmoji::getMentionTag)
+                .findFirst()
+                .orElse("✅");
 
-        this.setTitle((successEmoji.map(KnownCustomEmoji::getMentionTag).orElse("✅")) + " Wykonano!");
+        this.setTitle(successEmoji + " Wykonano!");
         this.setColor(this.successColor);
 
         return this;
     }
 
     public EmbedMessage error() {
-        Optional<KnownCustomEmoji> successEmoji = this.server.getCustomEmojisByNameIgnoreCase("error").stream().findFirst();
+        String errorEmoji = this.server.getCustomEmojisByNameIgnoreCase("error")
+                .stream()
+                .map(KnownCustomEmoji::getMentionTag)
+                .findFirst().orElse("❌");
 
-        this.setTitle((successEmoji.map(KnownCustomEmoji::getMentionTag).orElse("❌")) + " Błąd!");
+        this.setTitle(errorEmoji + " Błąd!");
         this.setColor(this.errorColor);
 
         return this;

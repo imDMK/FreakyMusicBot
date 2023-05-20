@@ -9,6 +9,7 @@ import lombok.Getter;
 import me.dmk.app.audio.server.ServerAudioPlayerMap;
 import me.dmk.app.command.service.CommandService;
 import me.dmk.app.configuration.AppConfiguration;
+import me.dmk.app.listener.ServerListener;
 import me.dmk.app.listener.SlashCommandListener;
 import me.dmk.app.listener.button.ButtonInteractionListener;
 import org.javacord.api.DiscordApi;
@@ -85,10 +86,12 @@ public class MusicApp {
         /* Listeners */
         Stream.of(
                 new ButtonInteractionListener(this.serverAudioPlayerMap),
+                new ServerListener(),
                 new SlashCommandListener(this.commandService, this.serverAudioPlayerMap)
         ).forEach(discordApi::addListener);
 
         discordApi.setMessageCacheSize(10, 60 * 60); //1 hour
+        discordApi.setAutomaticMessageCacheCleanupEnabled(true);
 
         discordApi.updateActivity(
                 this.appConfiguration.getActivityType(),
