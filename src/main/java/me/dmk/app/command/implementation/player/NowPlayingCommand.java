@@ -38,7 +38,6 @@ public class NowPlayingCommand extends PlayerCommand {
         long trackDuration = playingTrack.getDuration();
         long trackPosition = playingTrack.getPosition();
 
-        int volume = audioPlayer.getVolume();
         int progress = (int) Math.round(((double) trackPosition / trackDuration) * 20);
 
         String progressBar = StringUtil.createProgressBar(progress, 20);
@@ -48,7 +47,7 @@ public class NowPlayingCommand extends PlayerCommand {
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
-                StringUtil.volumeToIcon(volume) + " Aktualnie gram:",
+                StringUtil.volumeToIcon(audioPlayer.getVolume()) + " Aktualnie gram:",
                 "",
                 "**" + playingTrack.getInfo().title + "**",
                 trackPositionFormatted + " " + progressBar + " " + trackDurationFormatted
