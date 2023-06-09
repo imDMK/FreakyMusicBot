@@ -5,7 +5,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.server.ServerJoinEvent;
 import org.javacord.api.listener.server.ServerJoinListener;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Created by DMK on 20.05.2023

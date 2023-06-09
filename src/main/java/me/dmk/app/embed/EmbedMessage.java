@@ -10,7 +10,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.InteractionBase;
 import org.javacord.api.interaction.callback.InteractionImmediateResponseBuilder;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Created by DMK on 20.03.2023

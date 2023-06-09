@@ -9,7 +9,16 @@ import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.command.implementation.LyricsCommand;
 import me.dmk.app.command.implementation.PlayCommand;
 import me.dmk.app.command.implementation.StatusCommand;
-import me.dmk.app.command.implementation.player.*;
+import me.dmk.app.command.implementation.player.BassBoostCommand;
+import me.dmk.app.command.implementation.player.LeaveCommand;
+import me.dmk.app.command.implementation.player.NowPlayingCommand;
+import me.dmk.app.command.implementation.player.PositionCommand;
+import me.dmk.app.command.implementation.player.RepeatCommand;
+import me.dmk.app.command.implementation.player.ResumeCommand;
+import me.dmk.app.command.implementation.player.SkipCommand;
+import me.dmk.app.command.implementation.player.StopCommand;
+import me.dmk.app.command.implementation.player.TrackListCommand;
+import me.dmk.app.command.implementation.player.VolumeCommand;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.interaction.SlashCommandBuilder;
 
