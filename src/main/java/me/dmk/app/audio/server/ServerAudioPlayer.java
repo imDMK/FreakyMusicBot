@@ -17,14 +17,14 @@ import org.javacord.api.entity.user.User;
 @Getter
 public class ServerAudioPlayer extends AudioEventAdapter {
 
+    private static final float[] BASS_BOOST = {
+            0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f
+    };
+
     private final AudioPlayer audioPlayer;
     private final TrackScheduler trackScheduler;
     private final EqualizerFactory equalizerFactory;
     private final long requester;
-
-    private final float[] bassBoost = {
-            0.2f, 0.15f, 0.1f, 0.05f, 0.0f, -0.05f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f, -0.1f
-    };
 
     private Message musicMessage;
 
@@ -53,8 +53,8 @@ public class ServerAudioPlayer extends AudioEventAdapter {
 
     public void setBassBoost(int percentage) {
         float multiple = percentage / 100.f;
-        for (int i = 0; i < this.bassBoost.length; i++) {
-            this.equalizerFactory.setGain(i, bassBoost[i] * multiple);
+        for (int i = 0; i < BASS_BOOST.length; i++) {
+            this.equalizerFactory.setGain(i, BASS_BOOST[i] * multiple);
         }
     }
 
