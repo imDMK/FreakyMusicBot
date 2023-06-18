@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import me.dmk.app.audio.server.ServerAudioPlayer;
 import me.dmk.app.command.PlayerCommand;
 import me.dmk.app.embed.EmbedMessage;
+import me.dmk.app.util.DurationUtil;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -44,12 +45,12 @@ public class PositionCommand extends PlayerCommand {
             return;
         }
 
-        Duration position = Duration
+        Duration newPosition = Duration
                 .ofSeconds(second)
                 .plusMinutes(minute)
                 .plusHours(hour);
 
-        if (position.isNegative()) {
+        if (newPosition.isNegative()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Podano nieprawidłowy czas.");
 
@@ -57,7 +58,7 @@ public class PositionCommand extends PlayerCommand {
             return;
         }
 
-        if (position.toMillis() > playingTrack.getDuration()) {
+        if (newPosition.toMillis() > playingTrack.getDuration()) {
             EmbedMessage embedMessage = new EmbedMessage(server).error();
             embedMessage.setDescription("Podano wyższy czas niż utwór trwa.");
 
@@ -65,13 +66,13 @@ public class PositionCommand extends PlayerCommand {
             return;
         }
 
-        playingTrack.setPosition(position.toMillis());
+        playingTrack.setPosition(newPosition.toMillis());
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
         embedMessage.setDescription(
                 "Zmieniono pozycję utworu",
                 "**" + playingTrack.getInfo().title + "**",
-                "na " + position.toSeconds() + " sekundę."
+                "na " + DurationUtil.format(newPosition) + "."
         );
 
         embedMessage.createImmediateResponder(interaction);

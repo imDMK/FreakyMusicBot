@@ -44,10 +44,8 @@ public class SkipCommand extends PlayerCommand {
             return;
         }
 
-        //Skip track
         serverAudioPlayer.getTrackScheduler().nextTrack();
 
-        //Get next track
         AudioTrack nextTrack = audioPlayer.getPlayingTrack();
 
         String[] embedDescription = new String[]{

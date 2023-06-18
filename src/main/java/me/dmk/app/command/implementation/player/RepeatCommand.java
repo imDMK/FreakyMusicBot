@@ -23,17 +23,14 @@ public class RepeatCommand extends PlayerCommand {
         AudioPlayer audioPlayer = serverAudioPlayer.getAudioPlayer();
         AudioTrack playingTrack = audioPlayer.getPlayingTrack();
 
-        String playingTrackTitle = (playingTrack == null ? "Następnego utworu" : playingTrack.getInfo().title);
-
         boolean isRepeat = serverAudioPlayer.getTrackScheduler().switchRepeat();
 
         EmbedMessage embedMessage = new EmbedMessage(server).success();
 
         embedMessage.setDescription(
                 "**" + (isRepeat ? "Włączono" : "Wyłączono") + "** powtarzanie utworu:",
-                "**" + playingTrackTitle + "**"
+                "**" + (playingTrack == null ? "Następnego utworu" : playingTrack.getInfo().title) + "**"
         );
-
         embedMessage.createImmediateResponder(interaction);
     }
 }
